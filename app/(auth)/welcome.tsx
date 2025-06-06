@@ -18,22 +18,22 @@ const { width } = Dimensions.get('window');
 
 const welcomeData = [
   {
-    title: 'Custom Solutions',
-    description: 'Creating mobile applications for any business need.',
+    title: 'Find Co-Founders',
+    description: 'Connect with passionate entrepreneurs and build your dream team.',
     backgroundColor: Colors.primary,
+    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2340&auto=format&fit=crop',
+  },
+  {
+    title: 'Startup Tools',
+    description: 'Access powerful tools to validate ideas and grow your business.',
+    backgroundColor: Colors.white,
     image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop',
   },
   {
-    title: 'Design Interfaces',
-    description: 'Designing intuitive and engaging experiences for your brand.',
-    backgroundColor: Colors.white,
-    image: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?q=80&w=2340&auto=format&fit=crop',
-  },
-  {
-    title: 'Smart Trading',
-    description: 'Innovative tools for managing finances and market insights.',
+    title: 'Get Funded',
+    description: 'Connect with investors and secure funding for your startup.',
     backgroundColor: Colors.accent,
-    image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=2340&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?q=80&w=2340&auto=format&fit=crop',
   },
 ];
 
@@ -183,9 +183,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
+    paddingHorizontal: Theme.spacing.xl,
   },
   title: {
-    fontSize: 32,
+    fontSize: 40,
     fontWeight: Theme.typography.weights.bold as any,
     marginBottom: Theme.spacing.md,
     textAlign: 'center',
@@ -195,6 +196,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingHorizontal: Theme.spacing.lg,
     opacity: 0.8,
+    lineHeight: 24,
   },
   footer: {
     flexDirection: 'row',
@@ -213,7 +215,7 @@ const styles = StyleSheet.create({
   nextButton: {
     width: 56,
     height: 56,
-    borderRadius: 28,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     ...Theme.shadows.medium,
