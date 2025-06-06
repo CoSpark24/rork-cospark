@@ -11,13 +11,9 @@ export default function RootLayout() {
   const { setUserRegion, checkSubscriptionStatus } = useSubscriptionStore();
 
   useEffect(() => {
-    // Check subscription status on app load
+    // Initialize subscription status and region once on load
     checkSubscriptionStatus();
-    
-    // Set user region based on device locale or IP
-    // In a real app, you would use geolocation or IP-based detection
-    // For demo purposes, we'll use a hardcoded value
-    setUserRegion('IN');
+    setUserRegion('IN'); // Replace with dynamic detection for production
   }, []);
 
   return (
@@ -33,10 +29,15 @@ export default function RootLayout() {
       }}
       initialRouteName="(auth)/splash"
     >
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      {/* AUTH */}
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="admin" options={{ headerShown: false }} />
+
+      {/* MODALS */}
       <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+
+      {/* FEATURES */}
       <Stack.Screen name="subscription" options={{ title: 'Subscription Plans' }} />
       <Stack.Screen name="ai-mentor" options={{ title: 'AI Mentor' }} />
       <Stack.Screen name="nearby-founders" options={{ title: 'Nearby Founders' }} />
@@ -48,12 +49,20 @@ export default function RootLayout() {
       <Stack.Screen name="business-plans" options={{ title: 'Business Plans' }} />
       <Stack.Screen name="fundraising-checklist" options={{ title: 'Fundraising Checklist' }} />
       <Stack.Screen name="legal-templates" options={{ title: 'Legal Templates' }} />
+
+      {/* PROFILE */}
       <Stack.Screen name="profile/index" options={{ title: 'Profile' }} />
       <Stack.Screen name="profile/edit" options={{ title: 'Edit Profile' }} />
+
+      {/* PITCH DECK */}
       <Stack.Screen name="pitch-deck/create" options={{ title: 'Create Pitch Deck' }} />
       <Stack.Screen name="pitch-deck/[id]" options={{ title: 'Pitch Deck' }} />
+
+      {/* BUSINESS PLAN */}
       <Stack.Screen name="business-plan/create" options={{ title: 'Create Business Plan' }} />
       <Stack.Screen name="business-plan/[id]" options={{ title: 'Business Plan' }} />
+
+      {/* MESSAGING */}
       <Stack.Screen name="conversation/[id]" options={{ title: 'Conversation' }} />
     </Stack>
   );
