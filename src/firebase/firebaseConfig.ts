@@ -2,11 +2,11 @@ import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: 'YOUR_API_KEY_HERE',
-  authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_PROJECT_ID.appspot.com',
-  messagingSenderId: 'YOUR_SENDER_ID',
+  apiKey: 'AIzaSyDU4TpKa2Q7YoGe8Epf06zZgN60heeCBvI',
+  authDomain: 'cospark-71d2e.firebaseapp.com',
+  projectId: 'cospark-71d2e',
+  storageBucket: 'cospark-71d2e.appspot.com',
+  messagingSenderId: '332973014967',
   appId: 'YOUR_APP_ID',
 };
 
