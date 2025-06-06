@@ -23,7 +23,7 @@ interface OnboardingSlide {
   title: string;
   description: string;
   icon: React.ReactNode;
-  gradient: [string, string] | readonly [ColorValue, ColorValue, ...ColorValue[]];
+  gradient: string[];
 }
 
 export default function OnboardingSlides() {
@@ -38,28 +38,28 @@ export default function OnboardingSlides() {
       title: 'Find Your Co-founder',
       description: 'Connect with like-minded founders based on skills, interests, and vision. Our AI matching algorithm helps you find the perfect partner for your startup journey.',
       icon: <Users size={80} color={Colors.white} />,
-      gradient: [Colors.primary, Colors.primaryLight] as [string, string],
+      gradient: [Colors.primary, Colors.primaryLight],
     },
     {
       id: '2',
       title: 'Build Your Startup',
       description: 'Access powerful tools to develop your idea, create pitch decks, and validate your business model. Get guidance at every step of your startup journey.',
       icon: <Rocket size={80} color={Colors.white} />,
-      gradient: [Colors.secondary, Colors.secondaryLight] as [string, string],
+      gradient: [Colors.secondary, Colors.secondaryLight],
     },
     {
       id: '3',
       title: 'Connect with Investors',
       description: 'Showcase your startup to our network of investors. Get funding opportunities and mentorship to take your business to the next level.',
       icon: <Briefcase size={80} color={Colors.white} />,
-      gradient: [Colors.accent, Colors.accentLight] as [string, string],
+      gradient: [Colors.accent, Colors.accentLight],
     },
     {
       id: '4',
       title: 'Achieve Your Goals',
       description: 'Track your progress, celebrate milestones, and grow your startup with our supportive community of founders, investors, and mentors.',
       icon: <Target size={80} color={Colors.white} />,
-      gradient: [Colors.primary, Colors.secondary] as [string, string],
+      gradient: [Colors.primary, Colors.secondary],
     },
   ];
 
@@ -91,7 +91,7 @@ export default function OnboardingSlides() {
     return (
       <View style={styles.slideContainer}>
         <LinearGradient
-          colors={item.gradient as readonly string[]}
+          colors={item.gradient}
           style={styles.iconContainer}
         >
           {item.icon}
