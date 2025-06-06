@@ -5,6 +5,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Colors from '@/constants/colors';
 import Theme from '@/constants/theme';
 import { useAuthStore } from '@/store/auth-store';
+// Firebase auth import for listening to auth state changes
+// import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 export default function SplashScreen() {
   const router = useRouter();
@@ -31,7 +33,18 @@ export default function SplashScreen() {
       }),
     ]).start();
 
-    // Delay navigation after splash
+    // In a real Firebase implementation, we would listen for auth state changes:
+    // const auth = getAuth();
+    // const unsubscribe = onAuthStateChanged(auth, (user) => {
+    //   if (user) {
+    //     router.replace('/(tabs)');
+    //   } else {
+    //     router.replace('/(auth)');
+    //   }
+    // });
+    // return () => unsubscribe();
+
+    // For now, using the existing store state
     const timer = setTimeout(() => {
       if (isAuthenticated) {
         router.replace('/(tabs)');
