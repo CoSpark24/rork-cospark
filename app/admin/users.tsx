@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
     color: Colors.text,
   },
   filterButtonTextActive: {
-    color: Colors.white,
+    color: Colors.card,
   },
   usersContainer: {
     gap: Theme.spacing.md,

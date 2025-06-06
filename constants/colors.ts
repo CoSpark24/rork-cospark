@@ -28,6 +28,9 @@ export default {
   errorLight: "#FFB3BA",
   successLight: "#B3FFD6",
   
+  // Add white color for button text and other elements
+  white: "#FFFFFF",
+  
   // Neutral colors
   gray50: "#F8F9FA",
   gray100: "#F1F3F4",

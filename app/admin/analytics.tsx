@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
     fontWeight: Theme.typography.weights.medium as any,
   },
   timeRangeButtonTextActive: {
-    color: Colors.white,
+    color: Colors.card,
   },
   metricsContainer: {
     marginBottom: Theme.spacing.lg,
