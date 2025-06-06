@@ -38,3 +38,48 @@ export default function BadgesList({ badges, maxVisible = 3 }: BadgesListProps) 
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    marginVertical: Theme.spacing.md,
+  },
+  title: {
+    fontSize: Theme.typography.sizes.md,
+    fontWeight: Theme.typography.weights.semibold,
+    color: Colors.text,
+    marginBottom: Theme.spacing.sm,
+  },
+  badgesContainer: {
+    paddingRight: Theme.spacing.md,
+  },
+  badge: {
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderRadius: Theme.borderRadius.full,
+    padding: Theme.spacing.sm,
+    marginRight: Theme.spacing.sm,
+    minWidth: 80,
+    ...Theme.shadows.small,
+  },
+  badgeIcon: {
+    fontSize: 20,
+    marginBottom: Theme.spacing.xs,
+  },
+  badgeName: {
+    fontSize: Theme.typography.sizes.sm,
+    fontWeight: Theme.typography.weights.medium,
+    color: Colors.text,
+    textAlign: "center",
+  },
+  moreBadge: {
+    backgroundColor: Colors.secondary,
+    borderColor: Colors.secondary,
+    justifyContent: "center",
+  },
+  moreText: {
+    fontSize: Theme.typography.sizes.md,
+    fontWeight: Theme.typography.weights.bold,
+    color: Colors.white,
+  },
+});
