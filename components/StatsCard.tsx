@@ -4,7 +4,7 @@ import Colors from "@/constants/colors";
 import Theme from "@/constants/theme";
 import Card from "./Card";
 
-type StatsCardProps = {
+export type StatsCardProps = {
   title: string;
   value: string | number;
   icon: React.ReactNode;
