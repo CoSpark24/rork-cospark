@@ -60,7 +60,11 @@ const styles = StyleSheet.create({
     marginRight: Theme.spacing.sm,
     alignItems: "center",
     minWidth: 80,
-    ...Theme.shadows.small,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
   },
   badgeIcon: {
     fontSize: 20,
