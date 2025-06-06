@@ -101,6 +101,17 @@ export interface Match {
   updatedAt: number;
 }
 
+// Badge related types
+export interface Badge {
+  id: string;
+  name: string;
+  description?: string;
+  icon: string;
+  color: string;
+  criteria?: string;
+  earnedAt?: number;
+}
+
 // Messaging related types
 export interface Conversation {
   id: string;
