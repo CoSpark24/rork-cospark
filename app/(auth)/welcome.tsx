@@ -18,20 +18,20 @@ const { width } = Dimensions.get('window');
 
 const welcomeData = [
   {
-    title: 'Find Co-Founders',
-    description: 'Connect with passionate entrepreneurs and build your dream team.',
+    title: 'Custom Solutions',
+    description: 'Creating mobile applications for any business need.',
     backgroundColor: Colors.primary,
-    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2340&auto=format&fit=crop',
-  },
-  {
-    title: 'Startup Tools',
-    description: 'Access powerful tools to validate ideas and grow your business.',
-    backgroundColor: Colors.white,
     image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop',
   },
   {
-    title: 'Get Funded',
-    description: 'Connect with investors and secure funding for your startup.',
+    title: 'Design Interfaces',
+    description: 'Designing intuitive and engaging experiences for your brand.',
+    backgroundColor: Colors.white,
+    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2340&auto=format&fit=crop',
+  },
+  {
+    title: 'Smart Trading',
+    description: 'Innovative tools for managing finances and market insights.',
     backgroundColor: Colors.accent,
     image: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?q=80&w=2340&auto=format&fit=crop',
   },
