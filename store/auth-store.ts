@@ -13,8 +13,6 @@ interface AuthState {
   signup: (userData: SignupData) => Promise<void>;
   logout: () => void;
   updateProfile: (userData: Partial<UserProfile>) => Promise<void>;
-  sendOTP: (phone: string) => Promise<void>;
-  verifyOTP: (phone: string, otp: string) => Promise<boolean>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -33,13 +31,19 @@ export const useAuthStore = create<AuthState>()(
           let isValidLogin = false;
           
           if (credentials.method === 'email' && credentials.email && credentials.password) {
-            isValidLogin = credentials.email === currentUser.email;
-          } else if (credentials.method === 'phone' && credentials.phone && credentials.otp) {
-            isValidLogin = credentials.phone === currentUser.phone && credentials.otp === "123456";
+            // For demo purposes, any email with a password of at least 6 characters will work
+            isValidLogin = credentials.password.length >= 6;
           }
             
           if (isValidLogin) {
-            set({ user: currentUser, isAuthenticated: true, isLoading: false });
+            set({ 
+              user: {
+                ...currentUser,
+                email: credentials.email || currentUser.email
+              }, 
+              isAuthenticated: true, 
+              isLoading: false 
+            });
           } else {
             throw new Error("Invalid credentials");
           }
@@ -62,8 +66,6 @@ export const useAuthStore = create<AuthState>()(
             id: `user_${Date.now()}`,
             name: userData.name,
             email: userData.email || "",
-            phone: userData.phone,
-            role: userData.role,
             createdAt: Date.now(),
           };
           
@@ -93,34 +95,6 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false,
             error: error instanceof Error ? error.message : "Update failed",
           });
-        }
-      },
-      sendOTP: async (phone: string) => {
-        set({ isLoading: true, error: null });
-        try {
-          // Simulate API call
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          set({ isLoading: false });
-        } catch (error) {
-          set({
-            isLoading: false,
-            error: error instanceof Error ? error.message : "Failed to send OTP",
-          });
-        }
-      },
-      verifyOTP: async (phone: string, otp: string) => {
-        set({ isLoading: true, error: null });
-        try {
-          // Simulate API call
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          set({ isLoading: false });
-          return otp === "123456"; // Demo OTP
-        } catch (error) {
-          set({
-            isLoading: false,
-            error: error instanceof Error ? error.message : "OTP verification failed",
-          });
-          return false;
         }
       },
     }),

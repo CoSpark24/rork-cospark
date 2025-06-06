@@ -59,13 +59,6 @@ export default function WelcomeScreen() {
             style={styles.button}
           />
         </View>
-
-        <TouchableOpacity
-          style={styles.skipButton}
-          onPress={() => router.push('/onboarding-slides')}
-        >
-          <Text style={styles.skipButtonText}>Learn More</Text>
-        </TouchableOpacity>
       </View>
     </LinearGradient>
   );
@@ -124,14 +117,5 @@ const styles = StyleSheet.create({
   },
   button: {
     marginBottom: Theme.spacing.sm,
-  },
-  skipButton: {
-    alignItems: 'center',
-    padding: Theme.spacing.md,
-  },
-  skipButtonText: {
-    fontSize: Theme.typography.sizes.md,
-    color: Colors.primary,
-    fontWeight: Theme.typography.weights.medium as any,
   },
 });
