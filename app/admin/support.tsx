@@ -594,28 +594,31 @@ export default function AdminSupport() {
             <View style={styles.statusActions}>
               <Text style={styles.statusActionsLabel}>Update Status:</Text>
               <View style={styles.statusButtons}>
-                {["open", "in-progress", "resolved", "closed"].map((status) => (
-                  <TouchableOpacity
-                    key={status}
-                    style={[
-                      styles.statusButton,
-                      { backgroundColor: getStatusColor(status) + "20" },
-                      selectedTicket.status === status && styles.statusButtonActive,
-                    ]}
-                    onPress={() => handleUpdateStatus(selectedTicket.id, status as any)}
-                    disabled={selectedTicket.status === status}
-                  >
-                    <Text
+                {["open", "in-progress", "resolved", "closed"].map((status) => {
+                  const statusColor = getStatusColor(status);
+                  return (
+                    <TouchableOpacity
+                      key={status}
                       style={[
-                        styles.statusButtonText,
-                        { color: getStatusColor(status) },
-                        selectedTicket.status === status && styles.statusButtonTextActive,
+                        styles.statusButton,
+                        { backgroundColor: statusColor + "20" },
+                        selectedTicket.status === status && styles.statusButtonActive,
                       ]}
+                      onPress={() => handleUpdateStatus(selectedTicket.id, status as any)}
+                      disabled={selectedTicket.status === status}
                     >
-                      {status.replace("-", " ").toUpperCase()}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+                      <Text
+                        style={[
+                          styles.statusButtonText,
+                          { color: statusColor },
+                          selectedTicket.status === status && styles.statusButtonTextActive,
+                        ]}
+                      >
+                        {status.replace("-", " ").toUpperCase()}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
             </View>
           </Card>
@@ -934,7 +937,7 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   statusButtonActive: {
-    borderColor: getStatusColor("open"),
+    borderColor: Colors.primary,
   },
   statusButtonText: {
     fontSize: Theme.typography.sizes.sm,

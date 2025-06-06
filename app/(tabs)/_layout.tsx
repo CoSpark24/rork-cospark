@@ -7,7 +7,7 @@ import {
   User, 
   Calendar,
   Rss,
-  Toolbox
+  Tool
 } from 'lucide-react-native';
 import Colors from '@/constants/colors';
 
@@ -66,7 +66,7 @@ export default function TabsLayout() {
         name="toolkit"
         options={{
           title: 'Toolkit',
-          tabBarIcon: ({ color }) => <Toolbox size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Tool size={24} color={color} />,
         }}
       />
       <Tabs.Screen
