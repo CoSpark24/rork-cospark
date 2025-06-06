@@ -1,5 +1,5 @@
 import { Platform } from "react-native";
-import { UserProfile, UserRole, StartupStage, InvestmentStage, CompatibilityFactor, BusinessPlanData, PitchDeckData } from "@/types";
+import { UserProfile, UserRole, StartupStage, CompatibilityFactor, BusinessPlanData, PitchDeckData } from "@/types";
 
 type ContentPart = 
   | { type: 'text'; text: string; }

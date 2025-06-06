@@ -9,6 +9,7 @@ type StatsCardProps = {
   value: string | number;
   icon: React.ReactNode;
   color?: string;
+  subtitle?: string;
 };
 
 export default function StatsCard({
@@ -16,6 +17,7 @@ export default function StatsCard({
   value,
   icon,
   color = Colors.primary,
+  subtitle,
 }: StatsCardProps) {
   return (
     <Card style={styles.card}>
@@ -24,6 +26,7 @@ export default function StatsCard({
       </View>
       <Text style={styles.value}>{value}</Text>
       <Text style={styles.title}>{title}</Text>
+      {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
     </Card>
   );
 }
@@ -53,5 +56,11 @@ const styles = StyleSheet.create({
     fontSize: Theme.typography.sizes.sm,
     color: Colors.textSecondary,
     textAlign: "center",
+  },
+  subtitle: {
+    fontSize: Theme.typography.sizes.xs,
+    color: Colors.textSecondary,
+    textAlign: "center",
+    marginTop: Theme.spacing.xs,
   },
 });
