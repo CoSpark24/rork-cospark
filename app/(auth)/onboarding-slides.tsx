@@ -23,7 +23,7 @@ interface OnboardingSlide {
   title: string;
   description: string;
   icon: React.ReactNode;
-  gradient: [string, string] | [string, string, string]; // Fixed type to match LinearGradient requirements
+  gradient: readonly [ColorValue, ColorValue] | readonly [ColorValue, ColorValue, ColorValue]; // Fixed type
 }
 
 export default function OnboardingSlides() {
@@ -38,28 +38,28 @@ export default function OnboardingSlides() {
       title: 'Find Your Co-founder',
       description: 'Connect with like-minded founders based on skills, interests, and vision. Our AI matching algorithm helps you find the perfect partner for your startup journey.',
       icon: <Users size={80} color={Colors.white} />,
-      gradient: [Colors.primary, Colors.primaryLight],
+      gradient: [Colors.primary, Colors.primaryLight] as readonly [ColorValue, ColorValue],
     },
     {
       id: '2',
       title: 'Build Your Startup',
       description: 'Access powerful tools to develop your idea, create pitch decks, and validate your business model. Get guidance at every step of your startup journey.',
       icon: <Rocket size={80} color={Colors.white} />,
-      gradient: [Colors.secondary, Colors.secondaryLight],
+      gradient: [Colors.secondary, Colors.secondaryLight] as readonly [ColorValue, ColorValue],
     },
     {
       id: '3',
       title: 'Connect with Investors',
       description: 'Showcase your startup to our network of investors. Get funding opportunities and mentorship to take your business to the next level.',
       icon: <Briefcase size={80} color={Colors.white} />,
-      gradient: [Colors.accent, Colors.accentLight],
+      gradient: [Colors.accent, Colors.accentLight] as readonly [ColorValue, ColorValue],
     },
     {
       id: '4',
       title: 'Achieve Your Goals',
       description: 'Track your progress, celebrate milestones, and grow your startup with our supportive community of founders, investors, and mentors.',
       icon: <Target size={80} color={Colors.white} />,
-      gradient: [Colors.primary, Colors.secondary],
+      gradient: [Colors.primary, Colors.secondary] as readonly [ColorValue, ColorValue],
     },
   ];
 
