@@ -26,27 +26,18 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null });
         try {
           // Simulate API call
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 500));
           
-          let isValidLogin = false;
-          
-          if (credentials.method === 'email' && credentials.email && credentials.password) {
-            // For demo purposes, any email with a password of at least 6 characters will work
-            isValidLogin = credentials.password.length >= 6;
-          }
-            
-          if (isValidLogin) {
-            set({ 
-              user: {
-                ...currentUser,
-                email: credentials.email || currentUser.email
-              }, 
-              isAuthenticated: true, 
-              isLoading: false 
-            });
-          } else {
-            throw new Error("Invalid credentials");
-          }
+          // For demo purposes, we'll automatically log in any user
+          // In a real app, you would validate credentials against a backend
+          set({ 
+            user: {
+              ...currentUser,
+              email: credentials.email || currentUser.email
+            }, 
+            isAuthenticated: true, 
+            isLoading: false 
+          });
         } catch (error) {
           set({
             isLoading: false,
@@ -58,7 +49,7 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null });
         try {
           // Simulate API call
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 500));
           
           // For demo purposes, we'll create a new user based on the provided data
           const newUser: UserProfile = {
@@ -84,7 +75,7 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null });
         try {
           // Simulate API call
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 500));
           
           set((state) => ({
             user: state.user ? { ...state.user, ...userData } : null,

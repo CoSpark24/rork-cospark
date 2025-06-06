@@ -9,7 +9,7 @@ import { useAuthStore } from '@/store/auth-store';
 
 export default function WelcomeScreen() {
   const router = useRouter();
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, login } = useAuthStore();
 
   useEffect(() => {
     // If user is already authenticated, redirect to home
@@ -18,8 +18,14 @@ export default function WelcomeScreen() {
     }
   }, [isAuthenticated]);
 
-  const handleGuestAccess = () => {
-    router.push('/(tabs)');
+  const handleGuestAccess = async () => {
+    // Simple guest login without credentials
+    await login({
+      email: 'guest@example.com',
+      password: 'guest123',
+      method: 'guest'
+    });
+    router.replace('/(tabs)');
   };
 
   return (
