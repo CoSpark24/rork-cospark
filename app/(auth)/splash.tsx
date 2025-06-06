@@ -31,21 +31,21 @@ export default function SplashScreen() {
         useNativeDriver: true,
         easing: Easing.inOut(Easing.ease),
       }),
-    ]).start();
+    ]).start(() => {
+      // After animation, check auth state
+      router.replace('/(auth)/onboarding');
+    });
 
     // Listen for auth state changes
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // Check if onboarding is completed (for simplicity, assuming it's not stored yet)
-        // In a real app, you'd store this in AsyncStorage or Firestore
+        // Check if onboarding is completed
         const onboardingCompleted = false; // Replace with actual check
         if (onboardingCompleted) {
           router.replace('/(tabs)');
         } else {
           router.replace('/(auth)/onboarding');
         }
-      } else {
-        router.replace('/(auth)/login');
       }
     });
 

@@ -6,6 +6,9 @@ import Colors from '@/constants/colors';
 import Theme from '@/constants/theme';
 import { useAuthStore } from '@/store/auth-store';
 import { UserProfile } from '@/types';
+import Button from '@/components/Button';
+import Input from '@/components/Input';
+import Card from '@/components/Card';
 
 const { width } = Dimensions.get('window');
 
