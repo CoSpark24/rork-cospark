@@ -133,7 +133,7 @@ const WelcomeStep = ({ handleNext }: { handleNext: () => void; data: Partial<Use
     <View style={styles.welcomeContainer}>
       {Platform.OS !== 'web' ? (
         <LottieView
-          source={require('@/assets/images/welcome-animation.json')}
+          source={require('../../assets/lottie/welcome-animation.json')} // Updated to relative path
           autoPlay
           loop
           style={styles.animation}
