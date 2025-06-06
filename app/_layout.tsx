@@ -27,7 +27,6 @@ export default function RootLayout() {
           backgroundColor: Colors.background,
         },
       }}
-      initialRouteName="(auth)/splash"
     >
       {/* AUTH */}
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
