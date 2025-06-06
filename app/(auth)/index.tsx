@@ -18,6 +18,10 @@ export default function WelcomeScreen() {
     }
   }, [isAuthenticated]);
 
+  const handleGuestAccess = () => {
+    router.push('/(tabs)');
+  };
+
   return (
     <LinearGradient
       colors={[Colors.background, Colors.background, Colors.primaryLight + '20']}
@@ -44,17 +48,9 @@ export default function WelcomeScreen() {
 
         <View style={styles.buttonContainer}>
           <Button
-            title="Create Account"
-            onPress={() => router.push('/signup')}
+            title="Continue as Guest"
+            onPress={handleGuestAccess}
             gradient
-            fullWidth
-            style={styles.button}
-          />
-          
-          <Button
-            title="Sign In"
-            onPress={() => router.push('/login')}
-            variant="outline"
             fullWidth
             style={styles.button}
           />
