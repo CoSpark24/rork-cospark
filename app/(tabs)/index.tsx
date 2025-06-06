@@ -19,8 +19,7 @@ import {
   DollarSign,
   Target,
   Lightbulb,
-  UserPlus,
-  Award
+  UserPlus
 } from "lucide-react-native";
 import Colors from "@/constants/colors";
 import Theme from "@/constants/theme";
@@ -70,8 +69,8 @@ export default function DashboardScreen() {
 
   // Get upcoming events (next 3)
   const upcomingEvents = events
-    .filter(event => event.startTime > Date.now())
-    .sort((a, b) => a.startTime - b.startTime)
+    .filter(event => event.startDate > Date.now())
+    .sort((a, b) => a.startDate - b.startDate)
     .slice(0, 3);
 
   // Get upcoming meetings
@@ -125,9 +124,9 @@ export default function DashboardScreen() {
 
       {user.stats && (
         <GrowthScoreCard
-          score={user.stats.growthScore}
-          weeklyActivity={user.stats.weeklyActivity}
-          streakDays={user.stats.streakDays}
+          score={user.stats.growthScore || 0}
+          weeklyActivity={user.stats.weeklyActivity || []}
+          streakDays={user.stats.streakDays || 0}
         />
       )}
 
@@ -221,7 +220,7 @@ export default function DashboardScreen() {
                   {event.title}
                 </Text>
                 <Text style={styles.eventDate}>
-                  {new Date(event.startTime).toLocaleDateString([], {
+                  {new Date(event.startDate).toLocaleDateString([], {
                     month: 'short',
                     day: 'numeric',
                     hour: '2-digit',

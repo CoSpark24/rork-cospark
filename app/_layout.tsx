@@ -27,7 +27,6 @@ export default function RootLayout() {
           backgroundColor: Colors.background,
         },
       }}
-      initialRouteName={isAuthenticated ? "(tabs)" : "(auth)"}
     >
       {/* AUTH */}
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
