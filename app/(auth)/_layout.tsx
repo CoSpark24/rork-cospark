@@ -11,6 +11,7 @@ export default function AuthLayout() {
           backgroundColor: Colors.background,
         },
       }}
+      initialRouteName="splash"
     >
       <Stack.Screen name="splash" options={{ title: 'Welcome' }} />
     </Stack>

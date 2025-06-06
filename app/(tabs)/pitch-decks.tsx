@@ -82,7 +82,7 @@ export default function PitchDecksScreen() {
         />
       </View>
 
-      {pitchDecks.length === 0 ? (
+      {pitchDecks && pitchDecks.length === 0 ? (
         <View style={styles.emptyContainer}>
           <FileText size={64} color={Colors.textSecondary} />
           <Text style={styles.emptyTitle}>No Pitch Decks Yet</Text>
@@ -99,7 +99,7 @@ export default function PitchDecksScreen() {
         </View>
       ) : (
         <FlatList
-          data={pitchDecks}
+          data={pitchDecks || []}
           renderItem={renderPitchDeck}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
