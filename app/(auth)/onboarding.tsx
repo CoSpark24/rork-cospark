@@ -1,69 +1,214 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
-import Button from '@/components/Button';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity } from 'react-native';
+import { router } from 'expo-router';
+import { ChevronRight, Check } from 'lucide-react-native';
 import Colors from '@/constants/colors';
 import Theme from '@/constants/theme';
+import { useAuthStore } from '@/store/auth-store';
 import { UserProfile } from '@/types';
 
-interface WelcomeStepProps {
-  handleNext: () => void;
-  data: Partial<UserProfile>;
-  updateData: (data: Partial<UserProfile>) => void;
+const { width } = Dimensions.get('window');
+
+const onboardingData = [
+  {
+    title: 'Custom Solutions',
+    description: 'Creating mobile applications for any business need.',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop',
+    backgroundColor: Colors.primary,
+  },
+  {
+    title: 'Design Interfaces',
+    description: 'Designing intuitive and engaging experiences for your brand.',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop',
+    backgroundColor: Colors.white,
+  },
+  {
+    title: 'Smart Trading',
+    description: 'Innovative tools for managing finances and market insights.',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop',
+    backgroundColor: Colors.accent,
+  },
+];
+
+interface OnboardingStepProps {
+  data: {
+    title: string;
+    description: string;
+    image: string;
+    backgroundColor: string;
+  };
+  isActive: boolean;
+  onSkip: () => void;
+  onNext: () => void;
+  isLast: boolean;
 }
 
-const WelcomeStep: React.FC<WelcomeStepProps> = ({ handleNext, data, updateData }) => {
+const OnboardingStep: React.FC<OnboardingStepProps> = ({
+  data,
+  isActive,
+  onSkip,
+  onNext,
+  isLast,
+}) => {
+  if (!isActive) return null;
+
   return (
-    <View style={styles.welcomeContainer}>
+    <View style={[styles.stepContainer, { backgroundColor: data.backgroundColor }]}>
       <Image
-        source={{ uri: 'https://cdn3d.iconscout.com/3d/premium/thumb/startup-4108329-3407649.png' }}
-        style={styles.animation}
+        source={{ uri: data.image }}
+        style={styles.image}
         resizeMode="contain"
       />
-      <Text style={styles.welcomeTitle}>Welcome to CoSpark</Text>
-      <Text style={styles.welcomeSubtitle}>
-        Find your perfect co-founder and build your dream startup.
-      </Text>
-      <Button
-        title="Get Started"
-        onPress={handleNext}
-        variant="primary"
-        style={styles.getStartedButton}
-      />
+      <View style={styles.contentContainer}>
+        <Text style={[
+          styles.title,
+          { color: data.backgroundColor === Colors.white ? Colors.primary : Colors.white }
+        ]}>
+          {data.title}
+        </Text>
+        <Text style={[
+          styles.description,
+          { color: data.backgroundColor === Colors.white ? Colors.textSecondary : Colors.white }
+        ]}>
+          {data.description}
+        </Text>
+      </View>
+      <View style={styles.footer}>
+        <TouchableOpacity onPress={onSkip} style={styles.skipButton}>
+          <Text style={[
+            styles.skipText,
+            { color: data.backgroundColor === Colors.white ? Colors.textSecondary : Colors.white }
+          ]}>
+            Skip
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={onNext}
+          style={[
+            styles.nextButton,
+            {
+              backgroundColor: data.backgroundColor === Colors.white ? Colors.primary : Colors.white,
+            },
+          ]}
+        >
+          {isLast ? (
+            <Check size={24} color={data.backgroundColor === Colors.white ? Colors.white : Colors.primary} />
+          ) : (
+            <ChevronRight size={24} color={data.backgroundColor === Colors.white ? Colors.white : Colors.primary} />
+          )}
+        </TouchableOpacity>
+        <View style={styles.dotsContainer}>
+          {onboardingData.map((_, index) => (
+            <View
+              key={index}
+              style={[
+                styles.dot,
+                {
+                  backgroundColor: data.backgroundColor === Colors.white ? Colors.primary : Colors.white,
+                  opacity: index === onboardingData.indexOf(data) ? 1 : 0.5,
+                },
+              ]}
+            />
+          ))}
+        </View>
+      </View>
     </View>
   );
 };
 
-export default WelcomeStep;
+export default function Onboarding() {
+  const [currentStep, setCurrentStep] = useState(0);
+  const updateProfile = useAuthStore((state) => state.updateProfile);
+
+  const handleSkip = () => {
+    router.replace('/(tabs)');
+  };
+
+  const handleNext = async () => {
+    if (currentStep < onboardingData.length - 1) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      await updateProfile({ hasCompletedOnboarding: true } as Partial<UserProfile>);
+      router.replace('/(tabs)');
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      {onboardingData.map((step, index) => (
+        <OnboardingStep
+          key={index}
+          data={step}
+          isActive={currentStep === index}
+          onSkip={handleSkip}
+          onNext={handleNext}
+          isLast={index === onboardingData.length - 1}
+        />
+      ))}
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
-  welcomeContainer: {
+  container: {
     flex: 1,
+  },
+  stepContainer: {
+    flex: 1,
+    justifyContent: 'space-between',
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: Theme.spacing.md,
-    backgroundColor: Colors.background,
+    padding: Theme.spacing.xl,
   },
-  animation: {
-    width: 300,
-    height: 300,
-    marginBottom: Theme.spacing.lg,
+  image: {
+    width: width * 0.8,
+    height: width * 0.8,
+    marginTop: Theme.spacing.xl,
   },
-  welcomeTitle: {
+  contentContainer: {
+    alignItems: 'center',
+    marginVertical: Theme.spacing.xl,
+  },
+  title: {
     fontSize: Theme.typography.sizes.xl,
     fontWeight: Theme.typography.weights.bold as any,
-    color: Colors.text,
-    marginBottom: Theme.spacing.sm,
+    marginBottom: Theme.spacing.md,
     textAlign: 'center',
   },
-  welcomeSubtitle: {
+  description: {
     fontSize: Theme.typography.sizes.md,
-    color: Colors.textSecondary,
-    marginBottom: Theme.spacing.lg,
     textAlign: 'center',
+    paddingHorizontal: Theme.spacing.lg,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
     paddingHorizontal: Theme.spacing.md,
   },
-  getStartedButton: {
-    marginTop: Theme.spacing.md,
-    width: '80%',
+  skipButton: {
+    padding: Theme.spacing.sm,
+  },
+  skipText: {
+    fontSize: Theme.typography.sizes.md,
+  },
+  nextButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...Theme.shadows.small,
+  },
+  dotsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: Theme.spacing.xs,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
 });
