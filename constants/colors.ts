@@ -1,4 +1,57 @@
-const Colors = {
+// Define a type for the Colors object to ensure TypeScript recognizes all properties
+type ColorsType = {
+  // Primary Brand Colors
+  primary: string;
+  primaryLight: string;
+
+  // Secondary Brand Colors
+  secondary: string;
+  secondaryLight: string;
+
+  // Accent Colors
+  accent: string;
+  accentLight: string;
+
+  // Text Colors
+  text: string;
+  textSecondary: string;
+  white: string;
+
+  // Status Colors
+  success: string;
+  warning: string;
+  error: string;
+  disabled: string;
+
+  // UI Colors
+  background: string;
+  card: string;
+  border: string;
+
+  // Grayscale Shades
+  gray: {
+    50: string;
+    100: string;
+    200: string;
+    300: string;
+    400: string;
+    500: string;
+    600: string;
+    700: string;
+    800: string;
+    900: string;
+  };
+
+  // Gradients
+  gradientStart: string;
+  gradientEnd: string;
+
+  // Optional (Dark Mode or Opacity)
+  darkBackground: string;
+  overlay: string;
+};
+
+const Colors: ColorsType = {
   // Primary Brand Colors
   primary: '#4F46E5',
   primaryLight: '#818CF8',
