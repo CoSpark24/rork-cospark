@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, Animated, Easing } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -9,28 +9,29 @@ import { useAuthStore } from '@/store/auth-store';
 export default function SplashScreen() {
   const router = useRouter();
   const { isAuthenticated } = useAuthStore();
-  
-  const fadeAnim = new Animated.Value(0);
-  const scaleAnim = new Animated.Value(0.8);
+
+  // Use useRef to persist Animated.Value across re-renders
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.8)).current;
 
   useEffect(() => {
-    // Animation sequence
+    // Parallel animation for fade and scale
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 1000,
         useNativeDriver: true,
-        easing: Easing.out(Easing.ease),
+        easing: Easing.inOut(Easing.ease),
       }),
       Animated.timing(scaleAnim, {
         toValue: 1,
         duration: 1000,
         useNativeDriver: true,
-        easing: Easing.out(Easing.ease),
+        easing: Easing.inOut(Easing.ease),
       }),
     ]).start();
 
-    // Navigate after splash screen
+    // Delay navigation after splash
     const timer = setTimeout(() => {
       if (isAuthenticated) {
         router.replace('/(tabs)');
@@ -44,7 +45,7 @@ export default function SplashScreen() {
 
   return (
     <LinearGradient
-      colors={[Colors.gradientStart, Colors.gradientEnd]}
+      colors={[Colors.gradientStart || '#0A84FF', Colors.gradientEnd || '#5AC8FA']}
       style={styles.container}
     >
       <Animated.View
@@ -74,12 +75,12 @@ const styles = StyleSheet.create({
   },
   logoText: {
     fontSize: 48,
-    fontWeight: Theme.typography.weights.bold as any,
+    fontWeight: String(Theme.typography.weights?.bold || '700') as any,
     color: Colors.white,
     marginBottom: Theme.spacing.sm,
   },
   tagline: {
-    fontSize: Theme.typography.sizes.lg,
+    fontSize: Theme.typography.sizes?.lg || 18,
     color: Colors.white,
     opacity: 0.9,
   },

@@ -13,9 +13,6 @@ export default function AuthLayout() {
       }}
       initialRouteName="splash"
     >
-      <Stack.Screen name="index" options={{ title: 'Welcome' }} />
-      <Stack.Screen name="login" options={{ title: 'Login' }} />
-      <Stack.Screen name="signup" options={{ title: 'Sign Up' }} />
       <Stack.Screen name="splash" options={{ title: 'Welcome' }} />
     </Stack>
   );

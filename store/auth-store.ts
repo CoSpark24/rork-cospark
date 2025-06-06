@@ -10,7 +10,6 @@ interface AuthState {
   isLoading: boolean;
   error: string | null;
   login: (credentials: LoginCredentials) => Promise<void>;
-  signup: (userData: SignupData) => Promise<void>;
   logout: () => void;
   updateProfile: (userData: Partial<UserProfile>) => Promise<void>;
 }
@@ -28,8 +27,7 @@ export const useAuthStore = create<AuthState>()(
           // Simulate API call
           await new Promise((resolve) => setTimeout(resolve, 500));
           
-          // For demo purposes, we'll automatically log in any user
-          // In a real app, you would validate credentials against a backend
+          // For demo purposes, we'll automatically log in as guest
           set({ 
             user: {
               ...currentUser,
@@ -42,29 +40,6 @@ export const useAuthStore = create<AuthState>()(
           set({
             isLoading: false,
             error: error instanceof Error ? error.message : "Login failed",
-          });
-        }
-      },
-      signup: async (userData: SignupData) => {
-        set({ isLoading: true, error: null });
-        try {
-          // Simulate API call
-          await new Promise((resolve) => setTimeout(resolve, 500));
-          
-          // For demo purposes, we'll create a new user based on the provided data
-          const newUser: UserProfile = {
-            ...currentUser,
-            id: `user_${Date.now()}`,
-            name: userData.name,
-            email: userData.email || "",
-            createdAt: Date.now(),
-          };
-          
-          set({ user: newUser, isAuthenticated: true, isLoading: false });
-        } catch (error) {
-          set({
-            isLoading: false,
-            error: error instanceof Error ? error.message : "Signup failed",
           });
         }
       },
