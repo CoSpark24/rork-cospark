@@ -1,12 +1,13 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Platform, Image } from "react-native";
+import LottieView from "lottie-react-native";
 import Colors from "@/constants/colors";
 import Theme from "@/constants/theme";
 import { TrendingUp, Flame } from "lucide-react-native";
 
 type Props = {
   score: number;
-  weeklyActivity: number; // Make sure this is a number, not number[]
+  weeklyActivity: number;
   streakDays: number;
 };
 
@@ -35,7 +36,76 @@ const GrowthScoreCard: React.FC<Props> = ({ score, weeklyActivity, streakDays })
   );
 };
 
+// Main Home Screen Component
+const HomeScreen: React.FC = () => {
+  // Mock data for the GrowthScoreCard
+  // Assuming weeklyActivity was previously an array, now converted to a single number
+  const mockData = {
+    score: 750,
+    weeklyActivity: 42, // Changed from array to number (e.g., total activity count)
+    streakDays: 5,
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Welcome to CoSpark</Text>
+        <Text style={styles.headerSubtitle}>Build your startup journey</Text>
+      </View>
+
+      {/* Platform-specific animation or image */}
+      {Platform.OS !== "web" ? (
+        <LottieView
+          source={require("../../assets/lottie/welcome-animation.json")} // Placeholder path, replace with actual local asset
+          autoPlay
+          loop
+          style={styles.animation}
+        />
+      ) : (
+        <Image
+          source={{
+            uri: "https://cdn3d.iconscout.com/3d/premium/thumb/startup-4108329-3407649.png",
+          }}
+          style={styles.animation}
+          resizeMode="contain"
+        />
+      )}
+
+      <GrowthScoreCard
+        score={mockData.score}
+        weeklyActivity={mockData.weeklyActivity} // Ensure this is a number
+        streakDays={mockData.streakDays}
+      />
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
+    paddingTop: Theme.spacing.xl,
+  },
+  header: {
+    paddingHorizontal: Theme.spacing.lg,
+    marginBottom: Theme.spacing.lg,
+  },
+  headerTitle: {
+    fontSize: Theme.typography.sizes.xl,
+    fontWeight: Theme.typography.weights.bold as any,
+    color: Colors.text,
+    marginBottom: Theme.spacing.sm,
+  },
+  headerSubtitle: {
+    fontSize: Theme.typography.sizes.md,
+    color: Colors.textSecondary,
+  },
+  animation: {
+    width: 300,
+    height: 300,
+    alignSelf: "center",
+    marginBottom: Theme.spacing.lg,
+  },
   card: {
     backgroundColor: Colors.card,
     borderRadius: Theme.borderRadius.lg,
@@ -71,4 +141,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GrowthScoreCard;
+export default HomeScreen;
