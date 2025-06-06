@@ -36,9 +36,16 @@ export default function SplashScreen() {
     // Listen for auth state changes
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        router.replace('/(tabs)');
+        // Check if onboarding is completed (for simplicity, assuming it's not stored yet)
+        // In a real app, you'd store this in AsyncStorage or Firestore
+        const onboardingCompleted = false; // Replace with actual check
+        if (onboardingCompleted) {
+          router.replace('/(tabs)');
+        } else {
+          router.replace('/(auth)/onboarding');
+        }
       } else {
-        router.replace('/(auth)');
+        router.replace('/(auth)/login');
       }
     });
 

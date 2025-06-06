@@ -1,289 +1,126 @@
-import React, { useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  TouchableOpacity,
-  TextInput,
-  Alert,
-} from 'react-native';
+import React, { useState, useRef } from 'react';
+import { StyleSheet, View, Text, Animated, FlatList, TouchableOpacity, TextInput, ScrollView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ChevronRight, ChevronLeft, Check } from 'lucide-react-native';
+import LottieView from 'lottie-react-native';
 import Colors from '@/constants/colors';
 import Theme from '@/constants/theme';
 import Button from '@/components/Button';
+import Input from '@/components/Input';
 import { useAuthStore } from '@/store/auth-store';
-import { UserRole } from '@/types';
+import { UserProfile, UserRole } from '@/types';
 
 export default function OnboardingScreen() {
   const router = useRouter();
   const { user, updateProfile } = useAuthStore();
-  
-  const [step, setStep] = useState(1);
-  const [role, setRole] = useState<UserRole | string>(user?.role || UserRole.FOUNDER);
-  const [skills, setSkills] = useState<string[]>(user?.skills || []);
-  const [interests, setInterests] = useState<string[]>(user?.interests || []);
-  const [bio, setBio] = useState<string>(user?.bio || '');
-  const [location, setLocation] = useState<string>(user?.location || '');
-  
-  const skillOptions = [
-    'Software Development', 'UI/UX Design', 'Marketing', 'Sales', 
-    'Business Development', 'Product Management', 'Finance', 'Operations',
-    'Data Science', 'AI/ML', 'Blockchain', 'Hardware', 'Legal', 'HR'
-  ];
-  
-  const interestOptions = [
-    'SaaS', 'Fintech', 'Healthtech', 'Edtech', 'E-commerce', 'Marketplace',
-    'AI/ML', 'Blockchain', 'IoT', 'Mobile Apps', 'Enterprise Software',
-    'Consumer Products', 'Social Impact', 'Sustainability', 'Gaming'
-  ];
-  
-  const roleOptions = [
-    { value: UserRole.FOUNDER, label: 'Founder', description: 'I have an idea and looking for co-founders' },
-    { value: UserRole.INVESTOR, label: 'Investor', description: 'I want to invest in startups' },
-    { value: UserRole.MENTOR, label: 'Mentor', description: 'I want to mentor founders' }
+  const [step, setStep] = useState(0);
+  const animation = useRef(new Animated.Value(0)).current;
+
+  // Onboarding data for the user profile
+  const [onboardingData, setOnboardingData] = useState<Partial<UserProfile>>({
+    name: user?.name || '',
+    role: UserRole.FOUNDER,
+    bio: '',
+    location: '',
+    skills: [],
+    interests: [],
+  });
+
+  const steps = [
+    { id: 0, title: 'Welcome', component: WelcomeStep },
+    { id: 1, title: 'Personal Details', component: PersonalDetailsStep },
+    { id: 2, title: 'Startup Info', component: StartupInfoStep },
+    { id: 3, title: 'Goals', component: GoalsStep },
+    { id: 4, title: 'Skills', component: SkillsStep },
+    { id: 5, title: 'Video Intro', component: VideoIntroStep },
   ];
 
-  const handleNext = () => {
-    if (step < 4) {
+  const handleNext = async () => {
+    if (step < steps.length - 1) {
       setStep(step + 1);
+      Animated.timing(animation, {
+        toValue: -(step + 1) * 100,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
     } else {
-      handleComplete();
+      // Update profile with onboarding data
+      await updateProfile(onboardingData);
+      router.replace('/(tabs)');
     }
   };
 
   const handleBack = () => {
-    if (step > 1) {
+    if (step > 0) {
       setStep(step - 1);
+      Animated.timing(animation, {
+        toValue: -(step - 1) * 100,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
     }
   };
 
-  const handleComplete = async () => {
-    try {
-      await updateProfile({
-        role,
-        skills,
-        interests,
-        bio,
-        location,
-      });
-      
-      router.replace('/(tabs)');
-    } catch (error) {
-      Alert.alert('Error', 'Failed to update profile. Please try again.');
-    }
+  const updateOnboardingData = (data: Partial<UserProfile>) => {
+    setOnboardingData(prev => ({ ...prev, ...data }));
   };
 
-  const toggleSkill = (skill: string) => {
-    if (skills.includes(skill)) {
-      setSkills(skills.filter(s => s !== skill));
-    } else {
-      if (skills.length < 5) {
-        setSkills([...skills, skill]);
-      } else {
-        Alert.alert('Limit Reached', 'You can select up to 5 skills.');
-      }
-    }
-  };
-
-  const toggleInterest = (interest: string) => {
-    if (interests.includes(interest)) {
-      setInterests(interests.filter(i => i !== interest));
-    } else {
-      if (interests.length < 5) {
-        setInterests([...interests, interest]);
-      } else {
-        Alert.alert('Limit Reached', 'You can select up to 5 interests.');
-      }
-    }
-  };
-
-  const renderStepIndicator = () => {
+  const renderStep = ({ item }: { item: typeof steps[0] }) => {
+    const StepComponent = item.component;
     return (
-      <View style={styles.stepIndicator}>
-        {[1, 2, 3, 4].map((s) => (
-          <View
-            key={s}
-            style={[
-              styles.stepDot,
-              s === step && styles.activeStepDot,
-              s < step && styles.completedStepDot,
-            ]}
-          >
-            {s < step && <Check size={12} color={Colors.white} />}
-          </View>
-        ))}
+      <View style={styles.stepContainer}>
+        <StepComponent
+          data={onboardingData}
+          updateData={updateOnboardingData}
+          handleNext={handleNext}
+        />
       </View>
     );
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Complete Your Profile</Text>
-        <Text style={styles.subtitle}>
-          Help us personalize your experience
-        </Text>
-        {renderStepIndicator()}
+      <View style={styles.progressContainer}>
+        {steps.map((s, index) => (
+          <View
+            key={s.id}
+            style={[
+              styles.progressDot,
+              index <= step ? styles.progressDotActive : null,
+            ]}
+          />
+        ))}
       </View>
 
-      <ScrollView style={styles.content}>
-        {step === 1 && (
-          <View style={styles.step}>
-            <Text style={styles.stepTitle}>What best describes you?</Text>
-            <Text style={styles.stepDescription}>
-              This helps us match you with the right people
-            </Text>
+      <FlatList
+        data={steps}
+        renderItem={renderStep}
+        keyExtractor={item => item.id.toString()}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        scrollEnabled={false}
+        style={styles.flatList}
+        initialScrollIndex={step}
+        getItemLayout={(data, index) => ({
+          length: 100,
+          offset: 100 * index,
+          index,
+        })}
+      />
 
-            <View style={styles.roleOptions}>
-              {roleOptions.map((option) => (
-                <TouchableOpacity
-                  key={option.value}
-                  style={[
-                    styles.roleOption,
-                    role === option.value && styles.selectedRoleOption,
-                  ]}
-                  onPress={() => setRole(option.value)}
-                >
-                  <View style={styles.roleHeader}>
-                    <Text style={styles.roleLabel}>{option.label}</Text>
-                    {role === option.value && (
-                      <View style={styles.checkmark}>
-                        <Check size={16} color={Colors.white} />
-                      </View>
-                    )}
-                  </View>
-                  <Text style={styles.roleDescription}>
-                    {option.description}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-        )}
-
-        {step === 2 && (
-          <View style={styles.step}>
-            <Text style={styles.stepTitle}>Select your skills</Text>
-            <Text style={styles.stepDescription}>
-              Choose up to 5 skills that best represent your expertise
-            </Text>
-
-            <View style={styles.tagsContainer}>
-              {skillOptions.map((skill) => (
-                <TouchableOpacity
-                  key={skill}
-                  style={[
-                    styles.tag,
-                    skills.includes(skill) && styles.selectedTag,
-                  ]}
-                  onPress={() => toggleSkill(skill)}
-                >
-                  <Text
-                    style={[
-                      styles.tagText,
-                      skills.includes(skill) && styles.selectedTagText,
-                    ]}
-                  >
-                    {skill}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            <Text style={styles.selectedCount}>
-              {skills.length}/5 skills selected
-            </Text>
-          </View>
-        )}
-
-        {step === 3 && (
-          <View style={styles.step}>
-            <Text style={styles.stepTitle}>Select your interests</Text>
-            <Text style={styles.stepDescription}>
-              Choose up to 5 areas that you're interested in
-            </Text>
-
-            <View style={styles.tagsContainer}>
-              {interestOptions.map((interest) => (
-                <TouchableOpacity
-                  key={interest}
-                  style={[
-                    styles.tag,
-                    interests.includes(interest) && styles.selectedTag,
-                  ]}
-                  onPress={() => toggleInterest(interest)}
-                >
-                  <Text
-                    style={[
-                      styles.tagText,
-                      interests.includes(interest) && styles.selectedTagText,
-                    ]}
-                  >
-                    {interest}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            <Text style={styles.selectedCount}>
-              {interests.length}/5 interests selected
-            </Text>
-          </View>
-        )}
-
-        {step === 4 && (
-          <View style={styles.step}>
-            <Text style={styles.stepTitle}>Tell us about yourself</Text>
-            <Text style={styles.stepDescription}>
-              Share a brief bio and your location
-            </Text>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Your Bio</Text>
-              <TextInput
-                style={styles.textArea}
-                value={bio}
-                onChangeText={setBio}
-                placeholder="Tell us about your background, experience, and what you're looking for..."
-                placeholderTextColor={Colors.textSecondary}
-                multiline
-                numberOfLines={4}
-                textAlignVertical="top"
-              />
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Your Location</Text>
-              <TextInput
-                style={styles.input}
-                value={location}
-                onChangeText={setLocation}
-                placeholder="City, Country"
-                placeholderTextColor={Colors.textSecondary}
-              />
-            </View>
-          </View>
-        )}
-      </ScrollView>
-
-      <View style={styles.footer}>
-        {step > 1 && (
-          <TouchableOpacity
-            style={styles.backButton}
+      <View style={styles.navigationContainer}>
+        {step > 0 && (
+          <Button
+            title="Back"
             onPress={handleBack}
-          >
-            <ChevronLeft size={24} color={Colors.text} />
-            <Text style={styles.backButtonText}>Back</Text>
-          </TouchableOpacity>
+            variant="outline"
+            style={styles.backButton}
+          />
         )}
-
         <Button
-          title={step === 4 ? "Complete" : "Next"}
+          title={step === steps.length - 1 ? 'Finish' : 'Next'}
           onPress={handleNext}
-          gradient
-          rightIcon={step < 4 ? <ChevronRight size={20} color={Colors.white} /> : undefined}
+          variant="primary"
           style={styles.nextButton}
         />
       </View>
@@ -291,181 +128,433 @@ export default function OnboardingScreen() {
   );
 }
 
+const WelcomeStep = ({ handleNext }: { handleNext: () => void; data: Partial<UserProfile>; updateData: (data: Partial<UserProfile>) => void }) => {
+  return (
+    <View style={styles.welcomeContainer}>
+      {Platform.OS !== 'web' ? (
+        <LottieView
+          source={require('https://assets.lottiefiles.com/packages/lf20_3vb3qwpu.json')}
+          autoPlay
+          loop
+          style={styles.animation}
+        />
+      ) : (
+        <Text style={styles.animationFallback}>Welcome Animation</Text>
+      )}
+      <Text style={styles.welcomeTitle}>Welcome to CoSpark</Text>
+      <Text style={styles.welcomeSubtitle}>
+        Find your perfect co-founder and build your dream startup.
+      </Text>
+      <Button
+        title="Get Started"
+        onPress={handleNext}
+        variant="primary"
+        style={styles.getStartedButton}
+      />
+    </View>
+  );
+};
+
+const PersonalDetailsStep = ({ data, updateData }: { data: Partial<UserProfile>; updateData: (data: Partial<UserProfile>) => void; handleNext: () => void }) => {
+  return (
+    <ScrollView style={styles.stepContent}>
+      <Text style={styles.stepTitle}>Personal Details</Text>
+      <Text style={styles.stepSubtitle}>Tell us about yourself</Text>
+
+      <Input
+        label="Name"
+        placeholder="Enter your full name"
+        value={data.name || ''}
+        onChangeText={text => updateData({ name: text })}
+        containerStyle={styles.input}
+      />
+      <Input
+        label="Location"
+        placeholder="Where are you based?"
+        value={data.location || ''}
+        onChangeText={text => updateData({ location: text })}
+        containerStyle={styles.input}
+      />
+      <Input
+        label="Bio"
+        placeholder="A short bio about yourself"
+        multiline
+        numberOfLines={4}
+        value={data.bio || ''}
+        onChangeText={text => updateData({ bio: text })}
+        containerStyle={styles.input}
+      />
+    </ScrollView>
+  );
+};
+
+const StartupInfoStep = ({ data, updateData }: { data: Partial<UserProfile>; updateData: (data: Partial<UserProfile>) => void; handleNext: () => void }) => {
+  return (
+    <ScrollView style={styles.stepContent}>
+      <Text style={styles.stepTitle}>Startup Info</Text>
+      <Text style={styles.stepSubtitle}>What are you working on?</Text>
+
+      <View style={styles.roleContainer}>
+        <Text style={styles.roleLabel}>Your Role</Text>
+        <View style={styles.roleButtons}>
+          {Object.values(UserRole).map(role => (
+            <TouchableOpacity
+              key={role}
+              style={[
+                styles.roleButton,
+                data.role === role && styles.roleButtonActive,
+              ]}
+              onPress={() => updateData({ role })}
+            >
+              <Text
+                style={[
+                  styles.roleButtonText,
+                  data.role === role && styles.roleButtonTextActive,
+                ]}
+              >
+                {role.charAt(0).toUpperCase() + role.slice(1)}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+    </ScrollView>
+  );
+};
+
+const GoalsStep = ({ data, updateData }: { data: Partial<UserProfile>; updateData: (data: Partial<UserProfile>) => void; handleNext: () => void }) => {
+  const interests = ['Tech', 'Healthcare', 'Finance', 'Education', 'E-commerce', 'Social Impact'];
+  const toggleInterest = (interest: string) => {
+    const currentInterests = data.interests || [];
+    if (currentInterests.includes(interest)) {
+      updateData({ interests: currentInterests.filter(i => i !== interest) });
+    } else {
+      updateData({ interests: [...currentInterests, interest] });
+    }
+  };
+
+  return (
+    <ScrollView style={styles.stepContent}>
+      <Text style={styles.stepTitle}>Your Goals</Text>
+      <Text style={styles.stepSubtitle}>What are you looking to achieve?</Text>
+
+      <Text style={styles.sectionLabel}>Interests</Text>
+      <View style={styles.interestsContainer}>
+        {interests.map(interest => (
+          <TouchableOpacity
+            key={interest}
+            style={[
+              styles.interestPill,
+              data.interests?.includes(interest) && styles.interestPillActive,
+            ]}
+            onPress={() => toggleInterest(interest)}
+          >
+            <Text
+              style={[
+                styles.interestText,
+                data.interests?.includes(interest) && styles.interestTextActive,
+              ]}
+            >
+              {interest}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </ScrollView>
+  );
+};
+
+const SkillsStep = ({ data, updateData }: { data: Partial<UserProfile>; updateData: (data: Partial<UserProfile>) => void; handleNext: () => void }) => {
+  const skills = ['Product Management', 'Marketing', 'Development', 'Design', 'Finance', 'Operations'];
+  const toggleSkill = (skill: string) => {
+    const currentSkills = data.skills || [];
+    if (currentSkills.includes(skill)) {
+      updateData({ skills: currentSkills.filter(s => s !== skill) });
+    } else {
+      updateData({ skills: [...currentSkills, skill] });
+    }
+  };
+
+  return (
+    <ScrollView style={styles.stepContent}>
+      <Text style={styles.stepTitle}>Skills</Text>
+      <Text style={styles.stepSubtitle}>What skills do you bring?</Text>
+
+      <Text style={styles.sectionLabel}>Your Skills</Text>
+      <View style={styles.skillsContainer}>
+        {skills.map(skill => (
+          <TouchableOpacity
+            key={skill}
+            style={[
+              styles.skillPill,
+              data.skills?.includes(skill) && styles.skillPillActive,
+            ]}
+            onPress={() => toggleSkill(skill)}
+          >
+            <Text
+              style={[
+                styles.skillText,
+                data.skills?.includes(skill) && styles.skillTextActive,
+              ]}
+            >
+              {skill}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </ScrollView>
+  );
+};
+
+const VideoIntroStep = ({ handleNext }: { data: Partial<UserProfile>; updateData: (data: Partial<UserProfile>) => void; handleNext: () => void }) => {
+  return (
+    <View style={styles.stepContent}>
+      <Text style={styles.stepTitle}>Video Intro</Text>
+      <Text style={styles.stepSubtitle}>Record a short intro about yourself (60 sec max)</Text>
+
+      <View style={styles.videoContainer}>
+        <Text style={styles.videoPlaceholder}>Video recording feature</Text>
+      </View>
+
+      <View style={styles.videoButtons}>
+        <Button
+          title="Record"
+          onPress={() => alert('Video recording not implemented yet')}
+          variant="outline"
+          style={styles.recordButton}
+        />
+        <Button
+          title="Upload"
+          onPress={() => alert('Video upload not implemented yet')}
+          variant="outline"
+          style={styles.uploadButton}
+        />
+      </View>
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
+    paddingTop: Theme.spacing.xl,
   },
-  header: {
-    padding: Theme.spacing.xl,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: Theme.typography.sizes.xl,
-    fontWeight: Theme.typography.weights.bold as any,
-    color: Colors.text,
-    marginBottom: Theme.spacing.xs,
-  },
-  subtitle: {
-    fontSize: Theme.typography.sizes.md,
-    color: Colors.textSecondary,
-    marginBottom: Theme.spacing.lg,
-  },
-  stepIndicator: {
+  progressContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: Theme.spacing.md,
+    marginBottom: Theme.spacing.md,
   },
-  stepDot: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: Colors.background,
-    borderWidth: 2,
-    borderColor: Colors.border,
-    justifyContent: 'center',
-    alignItems: 'center',
+  progressDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: Colors.gray['300'],
+    marginHorizontal: 4,
   },
-  activeStepDot: {
-    borderColor: Colors.primary,
-    backgroundColor: Colors.primary + '20',
-  },
-  completedStepDot: {
+  progressDotActive: {
     backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
   },
-  content: {
+  flatList: {
     flex: 1,
-    paddingHorizontal: Theme.spacing.xl,
   },
-  step: {
+  stepContainer: {
+    width: Platform.OS === 'web' ? '100%' : 375, // Approximate iPhone width for consistency
+    padding: Theme.spacing.lg,
+  },
+  stepContent: {
     flex: 1,
   },
   stepTitle: {
-    fontSize: Theme.typography.sizes.lg,
-    fontWeight: Theme.typography.weights.semibold as any,
-    color: Colors.text,
-    marginBottom: Theme.spacing.xs,
+    fontSize: Theme.typography.sizes.xl,
+    fontWeight: Theme.typography.weights.bold as any,
+    color: Colors.primary,
+    marginBottom: Theme.spacing.sm,
+    textAlign: 'center',
   },
-  stepDescription: {
+  stepSubtitle: {
     fontSize: Theme.typography.sizes.md,
     color: Colors.textSecondary,
-    marginBottom: Theme.spacing.xl,
+    marginBottom: Theme.spacing.lg,
+    textAlign: 'center',
   },
-  roleOptions: {
-    gap: Theme.spacing.md,
-  },
-  roleOption: {
-    padding: Theme.spacing.lg,
-    borderRadius: Theme.borderRadius.lg,
-    backgroundColor: Colors.card,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  selectedRoleOption: {
-    borderColor: Colors.primary,
-    backgroundColor: Colors.primary + '10',
-  },
-  roleHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: Theme.spacing.xs,
-  },
-  roleLabel: {
-    fontSize: Theme.typography.sizes.lg,
-    fontWeight: Theme.typography.weights.semibold as any,
-    color: Colors.text,
-  },
-  checkmark: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: Colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  roleDescription: {
-    fontSize: Theme.typography.sizes.md,
-    color: Colors.textSecondary,
-  },
-  tagsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Theme.spacing.sm,
+  input: {
     marginBottom: Theme.spacing.md,
   },
-  tag: {
-    paddingHorizontal: Theme.spacing.md,
-    paddingVertical: Theme.spacing.sm,
-    borderRadius: Theme.borderRadius.full,
+  navigationContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: Theme.spacing.lg,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
     backgroundColor: Colors.card,
-    borderWidth: 1,
-    borderColor: Colors.border,
   },
-  selectedTag: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
+  backButton: {
+    flex: 1,
+    marginRight: Theme.spacing.sm,
   },
-  tagText: {
-    fontSize: Theme.typography.sizes.sm,
-    color: Colors.text,
+  nextButton: {
+    flex: 1,
   },
-  selectedTagText: {
-    color: Colors.white,
+  welcomeContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: Theme.spacing.lg,
   },
-  selectedCount: {
-    fontSize: Theme.typography.sizes.sm,
-    color: Colors.textSecondary,
-    marginTop: Theme.spacing.sm,
-  },
-  inputGroup: {
+  animation: {
+    width: 300,
+    height: 300,
     marginBottom: Theme.spacing.lg,
   },
-  inputLabel: {
+  animationFallback: {
+    width: 300,
+    height: 300,
+    marginBottom: Theme.spacing.lg,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.gray['200'],
+    borderRadius: Theme.borderRadius.md,
+    fontSize: Theme.typography.sizes.md,
+    color: Colors.textSecondary,
+  },
+  welcomeTitle: {
+    fontSize: Theme.typography.sizes.xxl,
+    fontWeight: Theme.typography.weights.bold as any,
+    color: Colors.primary,
+    marginBottom: Theme.spacing.sm,
+    textAlign: 'center',
+  },
+  welcomeSubtitle: {
+    fontSize: Theme.typography.sizes.lg,
+    color: Colors.textSecondary,
+    marginBottom: Theme.spacing.xl,
+    textAlign: 'center',
+    paddingHorizontal: Theme.spacing.md,
+  },
+  getStartedButton: {
+    width: '80%',
+    paddingVertical: Theme.spacing.md,
+  },
+  roleContainer: {
+    marginBottom: Theme.spacing.lg,
+  },
+  roleLabel: {
     fontSize: Theme.typography.sizes.md,
     fontWeight: Theme.typography.weights.medium as any,
     color: Colors.text,
     marginBottom: Theme.spacing.sm,
   },
-  input: {
-    backgroundColor: Colors.card,
+  roleButtons: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  roleButton: {
+    paddingVertical: Theme.spacing.sm,
+    paddingHorizontal: Theme.spacing.md,
     borderWidth: 1,
     borderColor: Colors.border,
     borderRadius: Theme.borderRadius.md,
-    padding: Theme.spacing.md,
+    marginBottom: Theme.spacing.sm,
+    width: '48%',
+    alignItems: 'center',
+  },
+  roleButtonActive: {
+    borderColor: Colors.primary,
+    backgroundColor: Colors.primaryLight,
+  },
+  roleButtonText: {
     fontSize: Theme.typography.sizes.md,
     color: Colors.text,
   },
-  textArea: {
-    backgroundColor: Colors.card,
+  roleButtonTextActive: {
+    color: Colors.primary,
+    fontWeight: Theme.typography.weights.medium as any,
+  },
+  sectionLabel: {
+    fontSize: Theme.typography.sizes.md,
+    fontWeight: Theme.typography.weights.medium as any,
+    color: Colors.text,
+    marginBottom: Theme.spacing.sm,
+  },
+  interestsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  interestPill: {
+    paddingVertical: Theme.spacing.sm,
+    paddingHorizontal: Theme.spacing.md,
     borderWidth: 1,
     borderColor: Colors.border,
-    borderRadius: Theme.borderRadius.md,
-    padding: Theme.spacing.md,
-    fontSize: Theme.typography.sizes.md,
-    color: Colors.text,
-    minHeight: 120,
+    borderRadius: Theme.borderRadius.full,
+    marginBottom: Theme.spacing.sm,
+    marginRight: Theme.spacing.sm,
   },
-  footer: {
+  interestPillActive: {
+    borderColor: Colors.secondary,
+    backgroundColor: Colors.secondaryLight,
+  },
+  interestText: {
+    fontSize: Theme.typography.sizes.sm,
+    color: Colors.text,
+  },
+  interestTextActive: {
+    color: Colors.secondary,
+    fontWeight: Theme.typography.weights.medium as any,
+  },
+  skillsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  skillPill: {
+    paddingVertical: Theme.spacing.sm,
+    paddingHorizontal: Theme.spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: Theme.borderRadius.full,
+    marginBottom: Theme.spacing.sm,
+    marginRight: Theme.spacing.sm,
+  },
+  skillPillActive: {
+    borderColor: Colors.primary,
+    backgroundColor: Colors.primaryLight,
+  },
+  skillText: {
+    fontSize: Theme.typography.sizes.sm,
+    color: Colors.text,
+  },
+  skillTextActive: {
+    color: Colors.primary,
+    fontWeight: Theme.typography.weights.medium as any,
+  },
+  videoContainer: {
+    height: 200,
+    backgroundColor: Colors.gray['200'],
+    borderRadius: Theme.borderRadius.md,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Theme.spacing.lg,
+  },
+  videoPlaceholder: {
+    fontSize: Theme.typography.sizes.md,
+    color: Colors.textSecondary,
+  },
+  videoButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: Theme.spacing.xl,
-    borderTopWidth: 1,
-    borderTopColor: Colors.border,
   },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  recordButton: {
+    flex: 1,
+    marginRight: Theme.spacing.sm,
   },
-  backButtonText: {
-    fontSize: Theme.typography.sizes.md,
-    color: Colors.text,
-    marginLeft: Theme.spacing.xs,
-  },
-  nextButton: {
-    minWidth: 120,
+  uploadButton: {
+    flex: 1,
   },
 });

@@ -1,52 +1,111 @@
-import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import Colors from '@/constants/colors';
 import Theme from '@/constants/theme';
+import Input from '@/components/Input';
 import Button from '@/components/Button';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/src/firebase/firebaseConfig';
 import { useAuthStore } from '@/store/auth-store';
 
 export default function SignupScreen() {
   const router = useRouter();
-  const { signup } = useAuthStore();
-  
-  const handleGuestSignup = async () => {
-    // Simple guest signup without registration
-    await signup({
-      name: 'Guest User',
-      email: 'guest@example.com',
-      password: 'guest123',
-      method: 'guest'
-    });
-    router.replace('/(tabs)');
+  const { isLoading, error } = useAuthStore();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const handleSignup = async () => {
+    if (password !== confirmPassword) {
+      // Normally, we'd set an error in the store, but for simplicity, we'll just alert
+      alert("Passwords don't match");
+      return;
+    }
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      // If successful, the onAuthStateChanged listener in splash.tsx will handle navigation
+    } catch (err) {
+      // Handle error appropriately in a real app
+      alert(err instanceof Error ? err.message : "Signup failed");
+    }
+  };
+
+  const navigateToLogin = () => {
+    router.push('/(auth)/login');
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Join CoSpark</Text>
-        <Text style={styles.subtitle}>
-          Continue as a guest to explore all features
-        </Text>
-      </View>
-      
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Continue as Guest"
-          onPress={handleGuestSignup}
-          fullWidth
-          gradient
-          style={styles.button}
-        />
-        
-        <TouchableOpacity 
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <Text style={styles.backButtonText}>Go Back</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Text style={styles.title}>Create Account</Text>
+        <Text style={styles.subtitle}>Sign up to get started</Text>
+
+        <View style={styles.formContainer}>
+          <Input
+            label="Full Name"
+            placeholder="Enter your name"
+            value={name}
+            onChangeText={setName}
+            containerStyle={styles.inputContainer}
+          />
+
+          <Input
+            label="Email"
+            placeholder="Enter your email"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
+            containerStyle={styles.inputContainer}
+          />
+
+          <Input
+            label="Password"
+            placeholder="Create a password"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+            containerStyle={styles.inputContainer}
+          />
+
+          <Input
+            label="Confirm Password"
+            placeholder="Confirm your password"
+            secureTextEntry
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            containerStyle={styles.inputContainer}
+          />
+
+          {error && <Text style={styles.errorText}>{error}</Text>}
+
+          <Button
+            title="Sign Up"
+            onPress={handleSignup}
+            variant="primary"
+            fullWidth
+            loading={isLoading}
+            disabled={isLoading || !email || !password || !name || password !== confirmPassword}
+            style={styles.signupButton}
+          />
+
+          <View style={styles.loginContainer}>
+            <Text style={styles.loginText}>Already have an account?</Text>
+            <Button
+              title="Log In"
+              onPress={navigateToLogin}
+              variant="text"
+              style={styles.loginButton}
+            />
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -54,38 +113,52 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
-    padding: Theme.spacing.xl,
-    justifyContent: 'center',
   },
-  header: {
-    marginBottom: Theme.spacing.xxl,
-    alignItems: 'center',
+  scrollContainer: {
+    flexGrow: 1,
+    padding: Theme.spacing.lg,
+    justifyContent: 'center',
   },
   title: {
     fontSize: Theme.typography.sizes.xxl,
     fontWeight: Theme.typography.weights.bold as any,
-    color: Colors.text,
-    marginBottom: Theme.spacing.sm,
+    color: Colors.primary,
+    marginBottom: Theme.spacing.xs,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: Theme.typography.sizes.md,
+    fontSize: Theme.typography.sizes.lg,
     color: Colors.textSecondary,
+    marginBottom: Theme.spacing.xl,
     textAlign: 'center',
   },
-  buttonContainer: {
-    gap: Theme.spacing.lg,
+  formContainer: {
+    width: '100%',
   },
-  button: {
+  inputContainer: {
     marginBottom: Theme.spacing.md,
   },
-  backButton: {
-    alignItems: 'center',
-    padding: Theme.spacing.sm,
+  signupButton: {
+    marginTop: Theme.spacing.md,
+    paddingVertical: Theme.spacing.md,
   },
-  backButtonText: {
-    color: Colors.primary,
+  loginContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: Theme.spacing.lg,
+  },
+  loginText: {
     fontSize: Theme.typography.sizes.md,
-    fontWeight: Theme.typography.weights.medium as any,
+    color: Colors.textSecondary,
+  },
+  loginButton: {
+    paddingHorizontal: Theme.spacing.sm,
+  },
+  errorText: {
+    fontSize: Theme.typography.sizes.sm,
+    color: Colors.error,
+    textAlign: 'center',
+    marginTop: Theme.spacing.sm,
   },
 });
