@@ -181,14 +181,12 @@ export default function AdminDashboard() {
             value={stats.totalUsers.toLocaleString()}
             icon={<Users size={24} color={Colors.primary} />}
             color={Colors.primary}
-            subtitle={`${stats.activeUsers.toLocaleString()} active`}
           />
           <StatsCard
             title="Monthly Revenue"
             value={`₹${(stats.monthlyRevenue / 1000).toFixed(0)}K`}
             icon={<DollarSign size={24} color={Colors.success} />}
             color={Colors.success}
-            subtitle={`₹${(stats.totalRevenue / 100000).toFixed(1)}L total`}
           />
         </View>
 
@@ -198,14 +196,12 @@ export default function AdminDashboard() {
             value={stats.reportedContent}
             icon={<AlertTriangle size={24} color={Colors.error} />}
             color={Colors.error}
-            subtitle="Needs review"
           />
           <StatsCard
             title="Pending Reviews"
             value={stats.pendingReviews}
             icon={<Shield size={24} color={Colors.warning} />}
             color={Colors.warning}
-            subtitle="Action required"
           />
         </View>
 
