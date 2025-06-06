@@ -14,7 +14,7 @@ import Theme from "@/constants/theme";
 import Card from "@/components/Card";
 import Button from "@/components/Button";
 import { usePitchDeckStore } from "@/store/pitch-deck-store";
-import { PitchDeckData } from "@/types";
+import { PitchDeck } from "@/types";
 
 export default function PitchDecksScreen() {
   const router = useRouter();
@@ -24,20 +24,20 @@ export default function PitchDecksScreen() {
     fetchPitchDecks();
   }, []);
 
-  const renderPitchDeck = ({ item }: { item: PitchDeckData }) => (
+  const renderPitchDeck = ({ item }: { item: PitchDeck }) => (
     <TouchableOpacity
       onPress={() => router.push(`/pitch-deck/${item.id}`)}
     >
       <Card style={styles.deckCard}>
         <View style={styles.deckHeader}>
-          <Text style={styles.deckName}>{item.startupName}</Text>
+          <Text style={styles.deckName}>{item.title}</Text>
           <Text style={styles.deckDate}>
             {new Date(item.createdAt).toLocaleDateString()}
           </Text>
         </View>
-        <Text style={styles.deckIndustry}>{item.industry}</Text>
+        <Text style={styles.deckIndustry}>{item.tags?.join(", ") || "No tags"}</Text>
         <Text style={styles.deckDescription} numberOfLines={2}>
-          {item.problem}
+          {item.description || "No description available"}
         </Text>
       </Card>
     </TouchableOpacity>

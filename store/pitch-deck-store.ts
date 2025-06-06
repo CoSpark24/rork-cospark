@@ -1,14 +1,14 @@
 import { create } from "zustand";
-import { PitchDeckData } from "@/types";
+import { PitchDeck } from "@/types";
 import { pitchDeckSamples } from "@/mocks/users";
 
 interface PitchDeckState {
-  pitchDecks: PitchDeckData[];
-  currentDeck: PitchDeckData | null;
+  pitchDecks: PitchDeck[];
+  currentDeck: PitchDeck | null;
   isLoading: boolean;
   error: string | null;
   fetchPitchDecks: () => Promise<void>;
-  createPitchDeck: (data: Partial<PitchDeckData>) => Promise<void>;
+  createPitchDeck: (data: Partial<PitchDeck>) => Promise<void>;
   setCurrentDeck: (deckId: string) => void;
 }
 
@@ -41,19 +41,18 @@ export const usePitchDeckStore = create<PitchDeckState>((set, get) => ({
       // Simulate API call to generate pitch deck
       await new Promise((resolve) => setTimeout(resolve, 2000));
       
-      const newDeck: PitchDeckData = {
+      const newDeck: PitchDeck = {
         id: `deck_${Date.now()}`,
-        startupName: data.startupName || "Untitled Startup",
-        industry: data.industry || "",
-        problem: data.problem || "",
-        solution: data.solution || "",
-        businessModel: data.businessModel || "",
-        market: data.market || "",
-        team: data.team || "",
-        traction: data.traction || "",
-        fundingNeeds: data.fundingNeeds || "",
+        userId: data.userId || "user_1",
+        title: data.title || "Untitled Pitch Deck",
+        description: data.description || "",
+        slides: data.slides || [],
+        coverImage: data.coverImage || "",
+        isPublic: data.isPublic || false,
         createdAt: Date.now(),
-        pdfUrl: "https://example.com/generated-pitch-deck.pdf",
+        updatedAt: Date.now(),
+        tags: data.tags || [],
+        status: data.status || "draft",
       };
       
       set((state) => ({

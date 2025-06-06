@@ -1,4 +1,4 @@
-import { UserProfile, UserRole } from '@/types';
+import { UserProfile, UserRole, PitchDeck } from '@/types';
 
 export const currentUser: UserProfile = {
   id: 'user_1',
@@ -94,5 +94,47 @@ export const users: UserProfile[] = [
     interests: ['IoT', 'Hardware', 'AI/ML', 'Consumer Products', 'Sustainability'],
     createdAt: 1682899200000, // May 1, 2023
     lastActive: Date.now() - 259200000, // 3 days ago
+  },
+];
+
+export const pitchDeckSamples: PitchDeck[] = [
+  {
+    id: 'deck_1',
+    userId: 'user_1',
+    title: 'FinTech Revolution',
+    description: 'A revolutionary fintech platform for small businesses',
+    slides: [],
+    coverImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=200&h=200&fit=crop',
+    isPublic: false,
+    createdAt: 1685577600000, // June 1, 2023
+    updatedAt: 1685577600000,
+    tags: ['Fintech', 'SaaS'],
+    status: 'draft',
+  },
+  {
+    id: 'deck_2',
+    userId: 'user_1',
+    title: 'AI-Powered Education',
+    description: 'Personalized learning through artificial intelligence',
+    slides: [],
+    coverImage: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=200&h=200&fit=crop',
+    isPublic: true,
+    createdAt: 1688169600000, // July 1, 2023
+    updatedAt: 1688169600000,
+    tags: ['Edtech', 'AI'],
+    status: 'published',
+  },
+  {
+    id: 'deck_3',
+    userId: 'user_2',
+    title: 'Sustainable Living',
+    description: 'Eco-friendly solutions for modern households',
+    slides: [],
+    coverImage: 'https://images.unsplash.com/photo-1545324410-cc1a3fa10c00?w=200&h=200&fit=crop',
+    isPublic: false,
+    createdAt: 1690848000000, // August 1, 2023
+    updatedAt: 1690848000000,
+    tags: ['Sustainability', 'Consumer'],
+    status: 'draft',
   },
 ];
