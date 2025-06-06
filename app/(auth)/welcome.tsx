@@ -1,25 +1,12 @@
-import React, { useState, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  Animated,
-  Platform,
-} from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Animated } from 'react-native';
 import { router } from 'expo-router';
 import { ChevronRight, Check } from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import Theme from '@/constants/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('window');
-
-// Updated colors to match the screenshot exactly
-const Colors = {
-  primary: '#4361EE',
-  white: '#FFFFFF',
-  accent: '#F4A261',
-};
 
 const welcomeData = [
   {
@@ -124,7 +111,7 @@ const WelcomeStep: React.FC<WelcomeStepProps> = ({
 
 export default function Welcome() {
   const [currentStep, setCurrentStep] = useState(0);
-  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const fadeAnim = React.useRef(new Animated.Value(1)).current;
 
   const handleSkip = async () => {
     await AsyncStorage.setItem('@cospark/has_seen_onboarding', 'true');
@@ -177,23 +164,23 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 24,
+    padding: Theme.spacing.xl,
   },
   contentContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'flex-start',
     width: '100%',
-    paddingHorizontal: 24,
+    paddingHorizontal: Theme.spacing.lg,
   },
   title: {
-    fontSize: 40,
-    fontWeight: '700',
-    marginBottom: 16,
+    fontSize: Theme.typography.sizes.xxl,
+    fontWeight: Theme.typography.weights.bold as any,
+    marginBottom: Theme.spacing.md,
     lineHeight: 48,
   },
   description: {
-    fontSize: 16,
+    fontSize: Theme.typography.sizes.md,
     lineHeight: 24,
     opacity: 0.8,
   },
@@ -202,40 +189,32 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    paddingHorizontal: 24,
-    marginBottom: Platform.OS === 'ios' ? 50 : 20,
+    paddingHorizontal: Theme.spacing.lg,
   },
   skipButton: {
-    padding: 12,
+    padding: Theme.spacing.sm,
   },
   skipText: {
-    fontSize: 16,
-    fontWeight: '500',
+    fontSize: Theme.typography.sizes.md,
+    fontWeight: Theme.typography.weights.medium as any,
   },
   nextButton: {
     width: 56,
     height: 56,
-    borderRadius: 16,
+    borderRadius: Theme.borderRadius.lg,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    ...Theme.shadows.small,
   },
   dotsContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
+    gap: Theme.spacing.xs,
   },
   dot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: Theme.borderRadius.full,
   },
 });

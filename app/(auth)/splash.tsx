@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/src/firebase/firebaseConfig';
+import Colors from '@/constants/colors';
 
 const ONBOARDING_KEY = '@cospark/has_seen_onboarding';
 
@@ -40,7 +41,7 @@ export default function SplashScreen() {
 
   return (
     <LinearGradient
-      colors={['#4361EE', '#4895EF']}
+      colors={[Colors.primary, Colors.primaryLight]}
       style={styles.container}
     />
   );
