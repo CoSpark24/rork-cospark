@@ -1,6 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Platform, Image } from "react-native";
-import LottieView from "lottie-react-native";
+import { View, Text, StyleSheet, Image } from "react-native";
 import Colors from "@/constants/colors";
 import Theme from "@/constants/theme";
 import { TrendingUp, Flame } from "lucide-react-native";
@@ -53,23 +52,13 @@ const HomeScreen: React.FC = () => {
         <Text style={styles.headerSubtitle}>Build your startup journey</Text>
       </View>
 
-      {/* Platform-specific animation or image */}
-      {Platform.OS !== "web" ? (
-        <LottieView
-          source={require("../../assets/lottie/welcome-animation.json")} // Placeholder path, replace with actual local asset
-          autoPlay
-          loop
-          style={styles.animation}
-        />
-      ) : (
-        <Image
-          source={{
-            uri: "https://cdn3d.iconscout.com/3d/premium/thumb/startup-4108329-3407649.png",
-          }}
-          style={styles.animation}
-          resizeMode="contain"
-        />
-      )}
+      <Image
+        source={{
+          uri: "https://cdn3d.iconscout.com/3d/premium/thumb/startup-4108329-3407649.png",
+        }}
+        style={styles.animation}
+        resizeMode="contain"
+      />
 
       <GrowthScoreCard
         score={mockData.score}

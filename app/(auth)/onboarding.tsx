@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, Platform, StyleSheet } from 'react-native';
-import LottieView from 'lottie-react-native';
+import { View, Text, Platform, StyleSheet, Image } from 'react-native';
 import Button from '@/components/Button';
 import Colors from '@/constants/colors';
 import Theme from '@/constants/theme';
@@ -9,16 +8,11 @@ import { UserProfile } from '@/types';
 const WelcomeStep = ({ handleNext, data, updateData }: { handleNext: () => void; data: Partial<UserProfile>; updateData: (data: Partial<UserProfile>) => void }) => {
   return (
     <View style={styles.welcomeContainer}>
-      {Platform.OS !== 'web' ? (
-        <LottieView
-          source={{ uri: 'https://assets10.lottiefiles.com/packages/lf20_vf8bnx.json' }}
-          autoPlay
-          loop
-          style={styles.animation}
-        />
-      ) : (
-        <Text style={styles.animationFallback}>Welcome Animation</Text>
-      )}
+      <Image
+        source={{ uri: 'https://cdn3d.iconscout.com/3d/premium/thumb/startup-4108329-3407649.png' }}
+        style={styles.animation}
+        resizeMode="contain"
+      />
       <Text style={styles.welcomeTitle}>Welcome to CoSpark</Text>
       <Text style={styles.welcomeSubtitle}>
         Find your perfect co-founder and build your dream startup.
