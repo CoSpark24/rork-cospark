@@ -1,4 +1,4 @@
-// Define a type for the Colors object to ensure TypeScript recognizes all properties
+// Define a type for the Colors object
 type ColorsType = {
   // Primary Brand Colors
   primary: string;
@@ -28,18 +28,18 @@ type ColorsType = {
   card: string;
   border: string;
 
-  // Grayscale Shades
+  // Grayscale Shades (note: keys are string literals)
   gray: {
-    50: string;
-    100: string;
-    200: string;
-    300: string;
-    400: string;
-    500: string;
-    600: string;
-    700: string;
-    800: string;
-    900: string;
+    '50': string;
+    '100': string;
+    '200': string;
+    '300': string;
+    '400': string;
+    '500': string;
+    '600': string;
+    '700': string;
+    '800': string;
+    '900': string;
   };
 
   // Gradients
@@ -51,6 +51,7 @@ type ColorsType = {
   overlay: string;
 };
 
+// Define the object using the above type
 const Colors: ColorsType = {
   // Primary Brand Colors
   primary: '#4F46E5',
@@ -82,16 +83,16 @@ const Colors: ColorsType = {
 
   // Grayscale Shades
   gray: {
-    50: '#F9FAFB',
-    100: '#F3F4F6',
-    200: '#E5E7EB',
-    300: '#D1D5DB',
-    400: '#9CA3AF',
-    500: '#6B7280',
-    600: '#4B5563',
-    700: '#374151',
-    800: '#1F2937',
-    900: '#111827',
+    '50': '#F9FAFB',
+    '100': '#F3F4F6',
+    '200': '#E5E7EB',
+    '300': '#D1D5DB',
+    '400': '#9CA3AF',
+    '500': '#6B7280',
+    '600': '#4B5563',
+    '700': '#374151',
+    '800': '#1F2937',
+    '900': '#111827',
   },
 
   // Gradients
