@@ -11,29 +11,31 @@ import {
 import { router } from 'expo-router';
 import { ChevronRight, Check } from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Colors from '@/constants/colors';
-import Theme from '@/constants/theme';
 
 const { width } = Dimensions.get('window');
 
+// Updated colors to match the screenshot exactly
+const Colors = {
+  primary: '#4361EE',
+  white: '#FFFFFF',
+  accent: '#F4A261',
+};
+
 const welcomeData = [
   {
-    title: 'Custom Solutions',
-    description: 'Creating mobile applications for any business need.',
+    title: 'Custom\nSolutions',
+    description: 'Creating mobile applications for\nany business need.',
     backgroundColor: Colors.primary,
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop',
   },
   {
-    title: 'Design Interfaces',
-    description: 'Designing intuitive and engaging experiences for your brand.',
+    title: 'Design\nInterfaces',
+    description: 'Designing intuitive and engaging\nexperiences for your brand.',
     backgroundColor: Colors.white,
-    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2340&auto=format&fit=crop',
   },
   {
-    title: 'Smart Trading',
-    description: 'Innovative tools for managing finances and market insights.',
+    title: 'Smart\nTrading',
+    description: 'Innovative tools for managing\nfinances and market insights.',
     backgroundColor: Colors.accent,
-    image: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?q=80&w=2340&auto=format&fit=crop',
   },
 ];
 
@@ -41,7 +43,6 @@ interface WelcomeStepProps {
   data: {
     title: string;
     description: string;
-    image: string;
     backgroundColor: string;
   };
   isActive: boolean;
@@ -70,7 +71,7 @@ const WelcomeStep: React.FC<WelcomeStepProps> = ({
         </Text>
         <Text style={[
           styles.description,
-          { color: data.backgroundColor === Colors.white ? Colors.textSecondary : Colors.white }
+          { color: data.backgroundColor === Colors.white ? Colors.primary : Colors.white }
         ]}>
           {data.description}
         </Text>
@@ -80,7 +81,7 @@ const WelcomeStep: React.FC<WelcomeStepProps> = ({
         <TouchableOpacity onPress={onSkip} style={styles.skipButton}>
           <Text style={[
             styles.skipText,
-            { color: data.backgroundColor === Colors.white ? Colors.textSecondary : Colors.white }
+            { color: data.backgroundColor === Colors.white ? Colors.primary : Colors.white }
           ]}>
             Skip
           </Text>
@@ -176,41 +177,40 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: Theme.spacing.xl,
+    padding: 24,
   },
   contentContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     width: '100%',
-    paddingHorizontal: Theme.spacing.xl,
+    paddingHorizontal: 24,
   },
   title: {
     fontSize: 40,
-    fontWeight: Theme.typography.weights.bold as any,
-    marginBottom: Theme.spacing.md,
-    textAlign: 'center',
+    fontWeight: '700',
+    marginBottom: 16,
+    lineHeight: 48,
   },
   description: {
-    fontSize: Theme.typography.sizes.lg,
-    textAlign: 'center',
-    paddingHorizontal: Theme.spacing.lg,
-    opacity: 0.8,
+    fontSize: 16,
     lineHeight: 24,
+    opacity: 0.8,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    paddingHorizontal: Theme.spacing.md,
+    paddingHorizontal: 24,
     marginBottom: Platform.OS === 'ios' ? 50 : 20,
   },
   skipButton: {
-    padding: Theme.spacing.sm,
+    padding: 12,
   },
   skipText: {
-    fontSize: Theme.typography.sizes.md,
+    fontSize: 16,
+    fontWeight: '500',
   },
   nextButton: {
     width: 56,
@@ -218,13 +218,20 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    ...Theme.shadows.medium,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   dotsContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: Theme.spacing.xs,
+    gap: 8,
   },
   dot: {
     width: 8,

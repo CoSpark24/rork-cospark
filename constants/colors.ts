@@ -11,4 +11,8 @@ export default {
   success: '#059669',
   border: '#E5E7EB',
   card: '#F9FAFB',
+  disabled: '#E5E7EB',
+  gray500: '#6B7280',
+  gradientStart: '#4361EE',
+  gradientEnd: '#4895EF',
 };

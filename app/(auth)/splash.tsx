@@ -3,7 +3,6 @@ import { StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Colors from '@/constants/colors';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/src/firebase/firebaseConfig';
 
@@ -41,7 +40,7 @@ export default function SplashScreen() {
 
   return (
     <LinearGradient
-      colors={[Colors.primary, Colors.primaryLight]}
+      colors={['#4361EE', '#4895EF']}
       style={styles.container}
     />
   );
