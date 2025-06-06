@@ -2,13 +2,8 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserProfile, AuthMethod, LoginCredentials, SignupData } from "@/types";
-// Firebase imports - Note: Actual Firebase setup would be required
-// import { initializeApp } from 'firebase/app';
-// import { getAuth, signInWithEmailAndPassword, signOut, updateProfile as updateFirebaseProfile } from 'firebase/auth';
-// For Expo, we might use expo-firebase-auth or similar, but sticking to placeholder for now
-
-// Mock user for demo purposes when Firebase isn't fully set up
-import { currentUser } from "@/mocks/users";
+import { signInWithEmailAndPassword, signOut, updateProfile as updateFirebaseProfile } from 'firebase/auth';
+import { auth } from '@/src/firebase/firebaseConfig';
 
 interface AuthState {
   user: UserProfile | null;
@@ -16,7 +11,7 @@ interface AuthState {
   isLoading: boolean;
   error: string | null;
   login: (credentials: LoginCredentials) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   updateProfile: (userData: Partial<UserProfile>) => Promise<void>;
 }
 
@@ -30,22 +25,25 @@ export const useAuthStore = create<AuthState>()(
       login: async (credentials: LoginCredentials) => {
         set({ isLoading: true, error: null });
         try {
-          // Simulate API call or Firebase Auth
-          // In a real implementation, this would be:
-          // const auth = getAuth();
-          // const userCredential = await signInWithEmailAndPassword(auth, credentials.email || '', credentials.password || '');
-          // const firebaseUser = userCredential.user;
-          // Map Firebase user to UserProfile
-          await new Promise((resolve) => setTimeout(resolve, 500));
-          
-          // For demo purposes, we'll automatically log in as guest
-          set({ 
+          const userCredential = await signInWithEmailAndPassword(
+            auth,
+            credentials.email || '',
+            credentials.password || ''
+          );
+
+          const firebaseUser = userCredential.user;
+
+          set({
             user: {
-              ...currentUser,
-              email: credentials.email || currentUser.email
-            }, 
-            isAuthenticated: true, 
-            isLoading: false 
+              id: firebaseUser.uid,
+              email: firebaseUser.email || '',
+              name: firebaseUser.displayName || 'New User',
+              avatar: firebaseUser.photoURL || '',
+              role: '',
+              createdAt: Date.now(),
+            },
+            isAuthenticated: true,
+            isLoading: false,
           });
         } catch (error) {
           set({
@@ -54,23 +52,24 @@ export const useAuthStore = create<AuthState>()(
           });
         }
       },
-      logout: () => {
-        // In a real implementation:
-        // const auth = getAuth();
-        // signOut(auth);
+      logout: async () => {
+        try {
+          await signOut(auth);
+        } catch (err) {
+          console.error('Logout error:', err);
+        }
         set({ user: null, isAuthenticated: false });
       },
       updateProfile: async (userData: Partial<UserProfile>) => {
         set({ isLoading: true, error: null });
         try {
-          // Simulate API call or Firebase update
-          // In a real implementation:
-          // const auth = getAuth();
-          // if (auth.currentUser) {
-          //   await updateFirebaseProfile(auth.currentUser, { displayName: userData.name, photoURL: userData.avatar });
-          // }
-          await new Promise((resolve) => setTimeout(resolve, 500));
-          
+          if (auth.currentUser) {
+            await updateFirebaseProfile(auth.currentUser, {
+              displayName: userData.name,
+              photoURL: userData.avatar,
+            });
+          }
+
           set((state) => ({
             user: state.user ? { ...state.user, ...userData } : null,
             isLoading: false,
