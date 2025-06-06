@@ -83,7 +83,7 @@ export default function DashboardScreen() {
           <Text style={styles.greeting}>Hello, {user.name.split(" ")[0]}</Text>
           <View style={styles.locationContainer}>
             <MapPin size={16} color={Colors.textSecondary} />
-            <Text style={styles.location}>{user.location}</Text>
+            <Text style={styles.location}>{user.location || "Unknown Location"}</Text>
           </View>
         </View>
         <TouchableOpacity 
@@ -125,7 +125,7 @@ export default function DashboardScreen() {
       {user.stats && (
         <GrowthScoreCard
           score={user.stats.growthScore || 0}
-          weeklyActivity={user.stats.weeklyActivity || []}
+          weeklyActivity={user.stats.weeklyActivity || [0, 0, 0, 0, 0, 0, 0]}
           streakDays={user.stats.streakDays || 0}
         />
       )}
