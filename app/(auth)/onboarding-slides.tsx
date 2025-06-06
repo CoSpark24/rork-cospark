@@ -91,7 +91,7 @@ export default function OnboardingSlides() {
     return (
       <View style={styles.slideContainer}>
         <LinearGradient
-          colors={item.gradient}
+          colors={item.gradient as readonly string[]}
           style={styles.iconContainer}
         >
           {item.icon}
