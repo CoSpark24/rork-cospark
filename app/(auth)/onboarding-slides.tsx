@@ -23,7 +23,7 @@ interface OnboardingSlide {
   title: string;
   description: string;
   icon: React.ReactNode;
-  gradient: string[];
+  gradient: [string, string] | [string, string, string]; // Fixed type to match LinearGradient requirements
 }
 
 export default function OnboardingSlides() {
@@ -91,7 +91,7 @@ export default function OnboardingSlides() {
     return (
       <View style={styles.slideContainer}>
         <LinearGradient
-          colors={item.gradient as readonly string[]}
+          colors={item.gradient}
           style={styles.iconContainer}
         >
           {item.icon}
