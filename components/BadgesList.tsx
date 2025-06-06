@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: Theme.typography.sizes.md,
-    fontWeight: Theme.typography.weights.semibold,
+    fontWeight: "600",
     color: Colors.text,
     marginBottom: Theme.spacing.sm,
   },
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   },
   badgeName: {
     fontSize: Theme.typography.sizes.sm,
-    fontWeight: Theme.typography.weights.medium,
+    fontWeight: "500",
     color: Colors.text,
     textAlign: "center",
   },
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
   },
   moreText: {
     fontSize: Theme.typography.sizes.md,
-    fontWeight: Theme.typography.weights.bold,
+    fontWeight: "700",
     color: Colors.white,
   },
 });
