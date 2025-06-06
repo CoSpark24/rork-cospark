@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: Theme.typography.sizes.md,
     fontWeight: Theme.typography.weights.medium as any,
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginBottom: Theme.spacing.xs,
   },
   inputContainer: {
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     paddingVertical: Theme.spacing.md,
     paddingHorizontal: Theme.spacing.md,
     fontSize: Theme.typography.sizes.md,
-    color: Colors.text,
+    color: Colors.textPrimary,
   },
   inputWithLeftIcon: {
     paddingLeft: Theme.spacing.xs,
