@@ -1,113 +1,9 @@
+// User related types
 export enum UserRole {
-  FOUNDER = "Founder",
-  CO_FOUNDER = "Co-founder",
-  INVESTOR = "Investor",
-  MENTOR = "Mentor",
-}
-
-export enum StartupStage {
-  IDEATION = "Ideation",
-  VALIDATION = "Validation",
-  MVP = "MVP",
-  EARLY_TRACTION = "Early Traction",
-  SCALING = "Scaling",
-  GROWTH = "Growth",
-}
-
-export enum FundingStatus {
-  BOOTSTRAPPED = "Bootstrapped",
-  PRE_SEED = "Pre-seed",
-  SEED = "Seed",
-  SERIES_A = "Series A",
-  SERIES_B = "Series B",
-  SERIES_B_PLUS = "Series B+",
-}
-
-export enum InvestmentStage {
-  PRE_SEED = "Pre-seed",
-  SEED = "Seed",
-  SERIES_A = "Series A",
-  SERIES_B = "Series B",
-  SERIES_C_PLUS = "Series C+",
-}
-
-export enum Industry {
-  TECHNOLOGY = "Technology",
-  HEALTHCARE = "Healthcare",
-  HEALTHTECH = "HealthTech",
-  FINTECH = "Fintech",
-  ECOMMERCE = "E-commerce",
-  EDUCATION = "Education",
-  EDTECH = "EdTech",
-  REAL_ESTATE = "Real Estate",
-  FOOD_BEVERAGE = "Food & Beverage",
-  TRAVEL = "Travel",
-  ENTERTAINMENT = "Entertainment",
-  SUSTAINABILITY = "Sustainability",
-  AI_ML = "AI/ML",
-  BLOCKCHAIN = "Blockchain",
-  SAAS = "SaaS",
-  FASHION = "Fashion",
-  BIOTECH = "BioTech",
-}
-
-export enum Availability {
-  FULL_TIME = "Full-time",
-  PART_TIME = "Part-time",
-  WEEKENDS = "Weekends",
-  EVENINGS = "Evenings",
-  FLEXIBLE = "Flexible",
-}
-
-export enum AuthMethod {
-  EMAIL = "email",
-  PHONE = "phone",
-}
-
-export enum SubscriptionPlan {
-  FREE = "Free",
-  PRO = "Pro",
-  ENTERPRISE = "Enterprise",
-}
-
-export interface Badge {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  color: string;
-  earnedAt?: number;
-}
-
-export interface UserStats {
-  profileViews: number;
-  connectionsCount: number;
-  pitchDecksCreated: number;
-  eventsAttended: number;
-  messagesExchanged: number;
-  growthScore: number;
-  streakDays: number;
-  weeklyActivity: number;
-}
-
-export interface CompatibilityFactor {
-  factor: string;
-  score: number;
-  description: string;
-}
-
-export interface SubscriptionFeature {
-  name: string;
-  included: boolean;
-  limit?: number;
-}
-
-export interface SubscriptionData {
-  plan: SubscriptionPlan;
-  price: number;
-  currency?: string;
-  features: SubscriptionFeature[];
-  isPopular?: boolean;
+  FOUNDER = "founder",
+  INVESTOR = "investor",
+  MENTOR = "mentor",
+  ADMIN = "admin"
 }
 
 export interface UserProfile {
@@ -115,41 +11,60 @@ export interface UserProfile {
   name: string;
   email: string;
   phone?: string;
-  role: UserRole;
-  bio: string;
-  location: string;
-  skills: string[];
-  experience?: string;
-  industry?: Industry;
-  stage?: StartupStage;
-  fundingStatus?: FundingStatus;
-  availability?: Availability;
-  lookingFor?: string[];
-  investmentRange?: string;
+  role: UserRole | string;
+  bio?: string;
   avatar?: string;
-  linkedIn?: string;
-  twitter?: string;
+  location?: string;
+  skills?: string[];
+  interests?: string[];
+  experience?: string;
+  education?: string;
   website?: string;
+  social?: {
+    linkedin?: string;
+    twitter?: string;
+    github?: string;
+  };
   createdAt: number;
-  badges?: Badge[];
-  stats?: UserStats;
-  startupIdea?: string;
-  vision?: string;
-  videoIntro?: string;
-  streakDays?: number;
-  investmentFocus?: Industry[];
-  portfolioCompanies?: string[];
-  sectors?: string[];
-  mentoringAreas?: Industry[];
-  subscription?: SubscriptionPlan;
+  lastActive?: number;
+  isVerified?: boolean;
+  isPremium?: boolean;
+  settings?: UserSettings;
+}
+
+export interface UserSettings {
+  notifications: {
+    email: boolean;
+    push: boolean;
+    matches: boolean;
+    messages: boolean;
+    events: boolean;
+  };
+  privacy: {
+    showEmail: boolean;
+    showPhone: boolean;
+    showLocation: boolean;
+    allowMessaging: boolean;
+  };
+  theme: "light" | "dark" | "system";
+  language: string;
+}
+
+// Authentication related types
+export enum AuthMethod {
+  EMAIL = "email",
+  PHONE = "phone",
+  GOOGLE = "google",
+  APPLE = "apple",
+  FACEBOOK = "facebook"
 }
 
 export interface LoginCredentials {
-  method: AuthMethod;
   email?: string;
   phone?: string;
   password?: string;
   otp?: string;
+  method: AuthMethod;
 }
 
 export interface SignupData {
@@ -157,294 +72,43 @@ export interface SignupData {
   email?: string;
   phone?: string;
   password?: string;
-  role: UserRole;
+  otp?: string;
+  method: AuthMethod;
+  role?: UserRole | string;
 }
 
-export interface MatchProfile extends UserProfile {
-  matchScore: number;
-  matchReasons: string[];
-}
-
-export interface Meeting {
+// Matching related types
+export interface MatchProfile {
   id: string;
-  title: string;
-  description?: string;
-  startTime: number;
-  endTime: number;
-  participants: UserProfile[];
-  type: "video" | "in-person" | "phone";
-  location?: string;
-  meetingUrl?: string;
-  status: "scheduled" | "completed" | "cancelled";
-}
-
-export interface PitchDeckData {
-  companyName: string;
-  tagline: string;
-  problem: string;
-  solution: string;
-  marketSize: string;
-  businessModel: string;
-  competition: string;
-  traction: string;
-  team: string;
-  financials: string;
-  funding: string;
-  useOfFunds: string;
-  industry: Industry;
-  stage: StartupStage;
-}
-
-export interface BusinessPlanData {
-  companyName: string;
-  executiveSummary: string;
-  companyDescription: string;
-  marketAnalysis: string;
-  organizationManagement: string;
-  serviceProductLine: string;
-  marketingSales: string;
-  fundingRequest: string;
-  financialProjections: string;
-  appendix: string;
-  industry: Industry;
-  stage: StartupStage;
-}
-
-export interface OnboardingSlide {
-  id: string;
-  title: string;
-  description: string;
-  animation: string;
-  backgroundColor: string;
-}
-
-export interface Event {
-  id: string;
-  title: string;
-  description: string;
-  type: "networking" | "workshop" | "pitch" | "conference" | "ama" | "webinar";
-  startTime: number;
-  endTime: number;
-  isOnline: boolean;
-  location?: string;
-  meetingUrl?: string;
-  organizer: string;
-  attendeeCount: number;
-  maxAttendees?: number;
-  tags: string[];
-  image?: string;
-  price?: number;
-  currency?: string;
-  isTicketed?: boolean;
-  liveQAEnabled?: boolean;
-  recordingUrl?: string;
-  streamingPlatform?: "zoom" | "youtube" | "custom";
-  streamingUrl?: string;
-  isLive?: boolean;
-  hasCountdown?: boolean;
-}
-
-export interface EventRSVP {
-  id: string;
-  eventId: string;
   userId: string;
-  status: "going" | "maybe" | "not-going";
-  timestamp: number;
-  ticketId?: string;
-}
-
-export interface EventQuestion {
-  id: string;
-  eventId: string;
-  userId: string;
-  userName: string;
-  question: string;
-  timestamp: number;
-  isAnswered: boolean;
-  upvotes: number;
-  answer?: string;
-  answeredBy?: string;
-  answeredAt?: number;
-}
-
-export interface FeedPost {
-  id: string;
-  authorId: string;
-  authorName: string;
-  authorAvatar?: string;
-  content: string;
-  type: "update" | "question" | "achievement" | "announcement";
-  timestamp: number;
-  likes: number;
-  comments: FeedComment[];
-  tags: string[];
-  images?: string[];
-  isLiked?: boolean;
-  isPinned?: boolean;
-  isTrending?: boolean;
-  isModerated?: boolean;
-  reportCount?: number;
-}
-
-export interface FeedComment {
-  id: string;
-  postId: string;
-  authorId: string;
-  authorName: string;
-  authorAvatar?: string;
-  content: string;
-  timestamp: number;
-  likes: number;
-  isLiked?: boolean;
-}
-
-export interface FounderCircle {
-  id: string;
   name: string;
-  description: string;
-  isPrivate: boolean;
-  memberCount: number;
-  createdBy: string;
-  createdAt: number;
-  tags: string[];
   avatar?: string;
-  isJoined?: boolean;
-  lastActivity?: number;
-  category: string;
-}
-
-export interface CircleMessage {
-  id: string;
-  circleId: string;
-  senderId: string;
-  senderName: string;
-  senderAvatar?: string;
-  text: string;
-  timestamp: number;
-  type: "message" | "announcement" | "poll";
-  isModerated?: boolean;
-}
-
-export interface Post {
-  id: string;
-  author: UserProfile;
-  content: string;
-  timestamp: number;
-  likes: number;
-  comments: Comment[];
-  isLiked: boolean;
-  type: "text" | "image" | "link" | "poll";
-  media?: string[];
-  poll?: {
-    question: string;
-    options: { text: string; votes: number }[];
-    totalVotes: number;
-    userVoted?: number;
-  };
-}
-
-export interface Comment {
-  id: string;
-  author: UserProfile;
-  content: string;
-  timestamp: number;
-  likes: number;
-  isLiked: boolean;
-}
-
-export interface Circle {
-  id: string;
-  name: string;
-  description: string;
-  members: number;
-  category: string;
-  isPrivate: boolean;
-  image?: string;
-  tags: string[];
-}
-
-export interface CrowdfundingCampaign {
-  id: string;
-  title: string;
-  description: string;
-  goal: number;
-  raised: number;
-  backers: number;
-  daysLeft: number;
-  creator: UserProfile;
-  image?: string;
-  category: string;
-  rewards: CampaignReward[];
-}
-
-export interface CampaignReward {
-  id: string;
-  title: string;
-  description: string;
-  amount: number;
-  backers: number;
-  estimatedDelivery: string;
-}
-
-export interface Investor {
-  id: string;
-  name: string;
-  firm: string;
-  focus: string[];
-  stage: StartupStage[];
-  checkSize: string;
-  location: string;
-  portfolio: string[];
+  role: UserRole | string;
+  skills: string[];
+  interests: string[];
   bio: string;
-  avatar?: string;
-  linkedIn?: string;
-  email?: string;
+  location?: string;
+  compatibility: number;
+  isOnline: boolean;
+  lastActive?: number;
 }
 
-export interface Milestone {
+export interface Match {
   id: string;
-  title: string;
-  description: string;
-  targetDate: string;
-  status: "pending" | "in-progress" | "completed" | "overdue";
-  category: "product" | "business" | "funding" | "team" | "marketing";
-  priority: "low" | "medium" | "high";
-  progress: number;
-  tasks: Task[];
-}
-
-export interface Task {
-  id: string;
-  title: string;
-  completed: boolean;
-  assignee?: string;
-  dueDate?: string;
-}
-
-export interface IdeaValidation {
-  id: string;
-  idea: string;
-  targetMarket: string;
-  problemStatement: string;
-  solution: string;
-  score: number;
-  feedback: ValidationFeedback[];
+  users: string[];
+  status: "pending" | "accepted" | "rejected";
   createdAt: number;
+  updatedAt: number;
 }
 
-export interface ValidationFeedback {
-  category: string;
-  score: number;
-  feedback: string;
-  suggestions: string[];
-}
-
+// Messaging related types
 export interface Conversation {
   id: string;
-  participants: UserProfile[];
+  participants: string[];
   lastMessage?: Message;
-  updatedAt: number;
   unreadCount: number;
+  createdAt: number;
+  updatedAt: number;
 }
 
 export interface Message {
@@ -452,55 +116,326 @@ export interface Message {
   conversationId: string;
   senderId: string;
   content: string;
-  timestamp: number;
-  type: "text" | "image" | "file";
-  fileUrl?: string;
-  fileName?: string;
-  isRead: boolean;
+  attachments?: Attachment[];
+  status: "sent" | "delivered" | "read";
+  createdAt: number;
 }
 
-export interface AdminUser {
+export interface Attachment {
   id: string;
+  type: "image" | "document" | "video" | "audio";
+  url: string;
   name: string;
-  email: string;
-  role: "admin" | "moderator";
-  permissions: string[];
-  createdAt: number;
+  size: number;
+  mimeType: string;
 }
 
-export interface Coupon {
+// Pitch Deck related types
+export interface PitchDeck {
   id: string;
-  code: string;
-  discount: number;
-  type: "percentage" | "fixed";
-  validUntil: number;
-  usageLimit: number;
-  usedCount: number;
-  isActive: boolean;
-  createdBy: string;
+  userId: string;
+  title: string;
+  description?: string;
+  slides: PitchDeckSlide[];
+  coverImage?: string;
+  isPublic: boolean;
   createdAt: number;
+  updatedAt: number;
+  tags?: string[];
+  status: "draft" | "published";
 }
 
-export interface PushNotification {
+export interface PitchDeckSlide {
+  id: string;
+  type: "cover" | "problem" | "solution" | "market" | "product" | "traction" | "team" | "competition" | "business_model" | "financials" | "ask" | "contact" | "custom";
+  title: string;
+  content: string;
+  image?: string;
+  order: number;
+}
+
+// Event related types
+export interface Event {
   id: string;
   title: string;
-  body: string;
-  targetUsers: string[];
-  scheduledAt?: number;
-  sentAt?: number;
-  status: "draft" | "scheduled" | "sent";
-  createdBy: string;
+  description: string;
+  startDate: number;
+  endDate: number;
+  location?: string;
+  isVirtual: boolean;
+  meetingLink?: string;
+  coverImage?: string;
+  organizer: string;
+  attendees: string[];
+  maxAttendees?: number;
+  price?: number;
+  currency?: string;
+  tags?: string[];
+  status: "upcoming" | "ongoing" | "completed" | "cancelled";
 }
 
-export interface ContentReport {
+// Feed related types
+export interface FeedItem {
   id: string;
-  contentType: "post" | "comment" | "user" | "event";
-  contentId: string;
+  type: "post" | "event" | "match" | "pitch_deck" | "milestone";
+  author: string;
+  content: string;
+  images?: string[];
+  likes: string[];
+  comments: Comment[];
+  createdAt: number;
+  updatedAt: number;
+  tags?: string[];
+}
+
+export interface Comment {
+  id: string;
+  author: string;
+  content: string;
+  createdAt: number;
+  likes: string[];
+  replies?: Comment[];
+}
+
+// Subscription related types
+export enum SubscriptionPlan {
+  FREE = "Free",
+  PRO = "Pro",
+  ENTERPRISE = "Enterprise"
+}
+
+export interface SubscriptionData {
+  plan: SubscriptionPlan;
+  price: number;
+  currency?: string;
+  isPopular?: boolean;
+  features: {
+    name: string;
+    included: boolean;
+    limit?: number;
+  }[];
+}
+
+// Business Plan related types
+export interface BusinessPlan {
+  id: string;
+  userId: string;
+  title: string;
+  description?: string;
+  sections: BusinessPlanSection[];
+  coverImage?: string;
+  isPublic: boolean;
+  createdAt: number;
+  updatedAt: number;
+  tags?: string[];
+  status: "draft" | "published";
+}
+
+export interface BusinessPlanSection {
+  id: string;
+  type: "executive_summary" | "company_overview" | "market_analysis" | "products_services" | "marketing_strategy" | "operational_plan" | "management_team" | "financial_plan" | "funding_request" | "appendix" | "custom";
+  title: string;
+  content: string;
+  order: number;
+}
+
+// Milestone related types
+export interface Milestone {
+  id: string;
+  userId: string;
+  title: string;
+  description?: string;
+  dueDate?: number;
+  completedDate?: number;
+  status: "pending" | "in_progress" | "completed" | "overdue";
+  priority: "low" | "medium" | "high";
+  tags?: string[];
+  createdAt: number;
+  updatedAt: number;
+}
+
+// Circle (Community) related types
+export interface Circle {
+  id: string;
+  name: string;
+  description: string;
+  coverImage?: string;
+  members: CircleMember[];
+  posts: FeedItem[];
+  isPrivate: boolean;
+  createdAt: number;
+  updatedAt: number;
+  tags?: string[];
+}
+
+export interface CircleMember {
+  userId: string;
+  role: "admin" | "moderator" | "member";
+  joinedAt: number;
+}
+
+// Investor related types
+export interface InvestorProfile extends UserProfile {
+  investmentPreferences?: {
+    stages: string[];
+    sectors: string[];
+    ticketSize: {
+      min: number;
+      max: number;
+    };
+    geographies: string[];
+  };
+  portfolio?: PortfolioCompany[];
+  investmentHistory?: Investment[];
+}
+
+export interface PortfolioCompany {
+  id: string;
+  name: string;
+  logo?: string;
+  description: string;
+  sector: string;
+  stage: string;
+  yearInvested: number;
+  status: "active" | "exited" | "acquired" | "ipo" | "closed";
+}
+
+export interface Investment {
+  id: string;
+  companyId: string;
+  amount: number;
+  currency: string;
+  date: number;
+  round: string;
+  notes?: string;
+}
+
+// Crowdfunding related types
+export interface CrowdfundingCampaign {
+  id: string;
+  userId: string;
+  title: string;
+  description: string;
+  coverImage?: string;
+  goal: number;
+  currency: string;
+  raised: number;
+  backers: number;
+  startDate: number;
+  endDate: number;
+  status: "draft" | "active" | "funded" | "expired";
+  rewards: CrowdfundingReward[];
+  updates: CrowdfundingUpdate[];
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface CrowdfundingReward {
+  id: string;
+  title: string;
+  description: string;
+  amount: number;
+  currency: string;
+  maxBackers?: number;
+  currentBackers: number;
+  estimatedDelivery?: number;
+}
+
+export interface CrowdfundingUpdate {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: number;
+  author: string;
+}
+
+// Legal Template related types
+export interface LegalTemplate {
+  id: string;
+  title: string;
+  description: string;
+  category: "incorporation" | "fundraising" | "employment" | "intellectual_property" | "privacy" | "terms" | "other";
+  content: string;
+  variables: LegalTemplateVariable[];
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface LegalTemplateVariable {
+  id: string;
+  name: string;
+  description: string;
+  type: "text" | "number" | "date" | "boolean" | "select";
+  options?: string[];
+  required: boolean;
+}
+
+// Meeting related types
+export interface Meeting {
+  id: string;
+  title: string;
+  description?: string;
+  participants: string[];
+  startTime: number;
+  endTime: number;
+  location?: string;
+  isVirtual: boolean;
+  meetingLink?: string;
+  status: "scheduled" | "completed" | "cancelled";
+  notes?: string;
+  createdBy: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
+// Notification related types
+export interface Notification {
+  id: string;
+  userId: string;
+  type: "match" | "message" | "event" | "milestone" | "system";
+  title: string;
+  body: string;
+  data?: any;
+  isRead: boolean;
+  createdAt: number;
+}
+
+// Admin related types
+export interface AdminStats {
+  users: {
+    total: number;
+    active: number;
+    new: number;
+    premium: number;
+  };
+  content: {
+    posts: number;
+    comments: number;
+    pitchDecks: number;
+    businessPlans: number;
+  };
+  engagement: {
+    messages: number;
+    matches: number;
+    eventAttendees: number;
+  };
+  revenue: {
+    total: number;
+    monthly: number;
+    subscriptions: number;
+    events: number;
+  };
+}
+
+export interface AdminReport {
+  id: string;
+  type: "user" | "content" | "message";
+  reportedItemId: string;
   reportedBy: string;
   reason: string;
   description?: string;
-  status: "pending" | "reviewed" | "resolved" | "dismissed";
-  reviewedBy?: string;
-  reviewedAt?: number;
+  status: "pending" | "resolved" | "dismissed";
   createdAt: number;
+  resolvedAt?: number;
+  resolvedBy?: string;
 }

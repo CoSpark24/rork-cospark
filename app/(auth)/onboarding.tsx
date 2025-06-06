@@ -1,93 +1,55 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
   View,
   ScrollView,
   TouchableOpacity,
-} from "react-native";
-import { useRouter } from "expo-router";
-import { MapPin, Briefcase, Target, Award } from "lucide-react-native";
-import Colors from "@/constants/colors";
-import Theme from "@/constants/theme";
-import Input from "@/components/Input";
-import Button from "@/components/Button";
-import { useAuthStore } from "@/store/auth-store";
-import { FundingStatus, StartupStage, UserRole } from "@/types";
-import { skillCategories } from "@/mocks/skills";
+  TextInput,
+  Alert,
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { ChevronRight, ChevronLeft, Check } from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import Theme from '@/constants/theme';
+import Button from '@/components/Button';
+import { useAuthStore } from '@/store/auth-store';
+import { UserRole } from '@/types';
 
 export default function OnboardingScreen() {
   const router = useRouter();
-  const { updateProfile, isLoading } = useAuthStore();
+  const { user, updateProfile } = useAuthStore();
   
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    role: UserRole.FOUNDER,
-    location: "",
-    startupIdea: "",
-    vision: "",
-    stage: StartupStage.IDEATION,
-    fundingStatus: FundingStatus.BOOTSTRAPPED,
-    skills: [] as string[],
-    lookingFor: [] as string[],
-    bio: "",
-    investmentFocus: [] as string[],
-    mentoringAreas: [] as string[],
-  });
-
-  const handleChange = (field: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const toggleSkill = (skill: string) => {
-    if (formData.skills.includes(skill)) {
-      handleChange(
-        "skills",
-        formData.skills.filter((s) => s !== skill)
-      );
-    } else {
-      handleChange("skills", [...formData.skills, skill]);
-    }
-  };
-
-  const toggleLookingFor = (skill: string) => {
-    if (formData.lookingFor.includes(skill)) {
-      handleChange(
-        "lookingFor",
-        formData.lookingFor.filter((s) => s !== skill)
-      );
-    } else {
-      handleChange("lookingFor", [...formData.lookingFor, skill]);
-    }
-  };
-
-  const toggleInvestmentFocus = (focus: string) => {
-    if (formData.investmentFocus.includes(focus)) {
-      handleChange(
-        "investmentFocus",
-        formData.investmentFocus.filter((f) => f !== focus)
-      );
-    } else {
-      handleChange("investmentFocus", [...formData.investmentFocus, focus]);
-    }
-  };
-
-  const toggleMentoringAreas = (area: string) => {
-    if (formData.mentoringAreas.includes(area)) {
-      handleChange(
-        "mentoringAreas",
-        formData.mentoringAreas.filter((a) => a !== area)
-      );
-    } else {
-      handleChange("mentoringAreas", [...formData.mentoringAreas, area]);
-    }
-  };
+  const [role, setRole] = useState<UserRole | string>(user?.role || UserRole.FOUNDER);
+  const [skills, setSkills] = useState<string[]>(user?.skills || []);
+  const [interests, setInterests] = useState<string[]>(user?.interests || []);
+  const [bio, setBio] = useState<string>(user?.bio || '');
+  const [location, setLocation] = useState<string>(user?.location || '');
+  
+  const skillOptions = [
+    'Software Development', 'UI/UX Design', 'Marketing', 'Sales', 
+    'Business Development', 'Product Management', 'Finance', 'Operations',
+    'Data Science', 'AI/ML', 'Blockchain', 'Hardware', 'Legal', 'HR'
+  ];
+  
+  const interestOptions = [
+    'SaaS', 'Fintech', 'Healthtech', 'Edtech', 'E-commerce', 'Marketplace',
+    'AI/ML', 'Blockchain', 'IoT', 'Mobile Apps', 'Enterprise Software',
+    'Consumer Products', 'Social Impact', 'Sustainability', 'Gaming'
+  ];
+  
+  const roleOptions = [
+    { value: UserRole.FOUNDER, label: 'Founder', description: 'I have an idea and looking for co-founders' },
+    { value: UserRole.INVESTOR, label: 'Investor', description: 'I want to invest in startups' },
+    { value: UserRole.MENTOR, label: 'Mentor', description: 'I want to mentor founders' }
+  ];
 
   const handleNext = () => {
-    if (step < totalSteps()) {
+    if (step < 4) {
       setStep(step + 1);
     } else {
-      handleSubmit();
+      handleComplete();
     }
   };
 
@@ -97,367 +59,231 @@ export default function OnboardingScreen() {
     }
   };
 
-  const handleSubmit = async () => {
-    await updateProfile(formData);
-    router.replace("/(tabs)");
-  };
-
-  const totalSteps = () => {
-    return formData.role === UserRole.FOUNDER || formData.role === UserRole.CO_FOUNDER ? 5 : 4;
-  };
-
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <>
-            <Text style={styles.stepTitle}>What's Your Role?</Text>
-            <Text style={styles.stepDescription}>
-              Select your primary role in the startup ecosystem
-            </Text>
-            
-            <View style={styles.optionsContainer}>
-              {Object.values(UserRole).map((role) => (
-                <TouchableOpacity
-                  key={role}
-                  style={[
-                    styles.optionButton,
-                    formData.role === role && styles.selectedOption,
-                  ]}
-                  onPress={() => handleChange("role", role)}
-                >
-                  <Text
-                    style={[
-                      styles.optionText,
-                      formData.role === role && styles.selectedOptionText,
-                    ]}
-                  >
-                    {role}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </>
-        );
-      case 2:
-        return (
-          <>
-            <Text style={styles.stepTitle}>Basic Information</Text>
-            <Text style={styles.stepDescription}>
-              Let's start with some basic information about you
-            </Text>
-            
-            <Input
-              label="Location"
-              placeholder="e.g., Bangalore, India"
-              value={formData.location}
-              onChangeText={(text) => handleChange("location", text)}
-              leftIcon={<MapPin size={20} color={Colors.textSecondary} />}
-            />
-            
-            {formData.role === UserRole.FOUNDER || formData.role === UserRole.CO_FOUNDER ? (
-              <>
-                <Input
-                  label="Startup Idea"
-                  placeholder="Briefly describe your startup idea"
-                  value={formData.startupIdea}
-                  onChangeText={(text) => handleChange("startupIdea", text)}
-                  multiline
-                  numberOfLines={3}
-                  textAlignVertical="top"
-                />
-                
-                <Input
-                  label="Vision"
-                  placeholder="What's your vision for this startup?"
-                  value={formData.vision}
-                  onChangeText={(text) => handleChange("vision", text)}
-                  multiline
-                  numberOfLines={3}
-                  textAlignVertical="top"
-                />
-              </>
-            ) : (
-              <Input
-                label="Bio"
-                placeholder="Tell others about yourself"
-                value={formData.bio}
-                onChangeText={(text) => handleChange("bio", text)}
-                multiline
-                numberOfLines={4}
-                textAlignVertical="top"
-              />
-            )}
-          </>
-        );
-      case 3:
-        return (
-          formData.role === UserRole.FOUNDER || formData.role === UserRole.CO_FOUNDER ? (
-            <>
-              <Text style={styles.stepTitle}>Startup Details</Text>
-              <Text style={styles.stepDescription}>
-                Tell us more about your startup's current stage
-              </Text>
-              
-              <Text style={styles.label}>Startup Stage</Text>
-              <View style={styles.optionsContainer}>
-                {Object.values(StartupStage).map((stage) => (
-                  <TouchableOpacity
-                    key={stage}
-                    style={[
-                      styles.optionButton,
-                      formData.stage === stage && styles.selectedOption,
-                    ]}
-                    onPress={() => handleChange("stage", stage)}
-                  >
-                    <Text
-                      style={[
-                        styles.optionText,
-                        formData.stage === stage && styles.selectedOptionText,
-                      ]}
-                    >
-                      {stage}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-              
-              <Text style={styles.label}>Funding Status</Text>
-              <View style={styles.optionsContainer}>
-                {Object.values(FundingStatus).map((status) => (
-                  <TouchableOpacity
-                    key={status}
-                    style={[
-                      styles.optionButton,
-                      formData.fundingStatus === status && styles.selectedOption,
-                    ]}
-                    onPress={() => handleChange("fundingStatus", status)}
-                  >
-                    <Text
-                      style={[
-                        styles.optionText,
-                        formData.fundingStatus === status &&
-                          styles.selectedOptionText,
-                      ]}
-                    >
-                      {status}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-              
-              <Input
-                label="Bio"
-                placeholder="Tell potential co-founders about yourself"
-                value={formData.bio}
-                onChangeText={(text) => handleChange("bio", text)}
-                multiline
-                numberOfLines={4}
-                textAlignVertical="top"
-              />
-            </>
-          ) : formData.role === UserRole.INVESTOR ? (
-            <>
-              <Text style={styles.stepTitle}>Investment Focus</Text>
-              <Text style={styles.stepDescription}>
-                What types of startups are you interested in investing in?
-              </Text>
-              
-              <View style={styles.skillCategory}>
-                <Text style={styles.categoryTitle}>Industry Focus</Text>
-                <View style={styles.skillsContainer}>
-                  {["Technology", "Healthcare", "FinTech", "EdTech", "Consumer", "SaaS", "AI/ML"].map((focus) => (
-                    <TouchableOpacity
-                      key={focus}
-                      style={[
-                        styles.skillButton,
-                        formData.investmentFocus.includes(focus) && styles.selectedSkill,
-                      ]}
-                      onPress={() => toggleInvestmentFocus(focus)}
-                    >
-                      <Text
-                        style={[
-                          styles.skillText,
-                          formData.investmentFocus.includes(focus) &&
-                            styles.selectedSkillText,
-                        ]}
-                      >
-                        {focus}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
-            </>
-          ) : (
-            <>
-              <Text style={styles.stepTitle}>Mentoring Areas</Text>
-              <Text style={styles.stepDescription}>
-                What areas can you provide mentorship in?
-              </Text>
-              
-              <View style={styles.skillCategory}>
-                <Text style={styles.categoryTitle}>Expertise Areas</Text>
-                <View style={styles.skillsContainer}>
-                  {["Product Strategy", "Fundraising", "Marketing", "Technology", "Operations", "Team Building"].map((area) => (
-                    <TouchableOpacity
-                      key={area}
-                      style={[
-                        styles.skillButton,
-                        formData.mentoringAreas.includes(area) && styles.selectedSkill,
-                      ]}
-                      onPress={() => toggleMentoringAreas(area)}
-                    >
-                      <Text
-                        style={[
-                          styles.skillText,
-                          formData.mentoringAreas.includes(area) &&
-                            styles.selectedSkillText,
-                        ]}
-                      >
-                        {area}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
-            </>
-          )
-        );
-      case 4:
-        return (
-          formData.role === UserRole.FOUNDER || formData.role === UserRole.CO_FOUNDER ? (
-            <>
-              <Text style={styles.stepTitle}>Your Skills</Text>
-              <Text style={styles.stepDescription}>
-                Select the skills you bring to the table
-              </Text>
-              
-              {skillCategories.map((category) => (
-                <View key={category.name} style={styles.skillCategory}>
-                  <Text style={styles.categoryTitle}>{category.name}</Text>
-                  <View style={styles.skillsContainer}>
-                    {category.skills.map((skill) => (
-                      <TouchableOpacity
-                        key={skill}
-                        style={[
-                          styles.skillButton,
-                          formData.skills.includes(skill) && styles.selectedSkill,
-                        ]}
-                        onPress={() => toggleSkill(skill)}
-                      >
-                        <Text
-                          style={[
-                            styles.skillText,
-                            formData.skills.includes(skill) &&
-                              styles.selectedSkillText,
-                          ]}
-                        >
-                          {skill}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                </View>
-              ))}
-            </>
-          ) : (
-            <>
-              <Text style={styles.stepTitle}>Final Details</Text>
-              <Text style={styles.stepDescription}>
-                Any additional information you'd like to share?
-              </Text>
-              
-              <Input
-                label="Additional Info"
-                placeholder="Anything else you'd like to add..."
-                value={formData.bio}
-                onChangeText={(text) => handleChange("bio", text)}
-                multiline
-                numberOfLines={4}
-                textAlignVertical="top"
-              />
-            </>
-          )
-        );
-      case 5:
-        return (
-          <>
-            <Text style={styles.stepTitle}>Looking For</Text>
-            <Text style={styles.stepDescription}>
-              Select the skills you're looking for in a co-founder
-            </Text>
-            
-            {skillCategories.map((category) => (
-              <View key={category.name} style={styles.skillCategory}>
-                <Text style={styles.categoryTitle}>{category.name}</Text>
-                <View style={styles.skillsContainer}>
-                  {category.skills.map((skill) => (
-                    <TouchableOpacity
-                      key={skill}
-                      style={[
-                        styles.lookingForButton,
-                        formData.lookingFor.includes(skill) &&
-                          styles.selectedLookingFor,
-                      ]}
-                      onPress={() => toggleLookingFor(skill)}
-                    >
-                      <Text
-                        style={[
-                          styles.lookingForText,
-                          formData.lookingFor.includes(skill) &&
-                            styles.selectedLookingForText,
-                        ]}
-                      >
-                        {skill}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
-            ))}
-          </>
-        );
-      default:
-        return null;
+  const handleComplete = async () => {
+    try {
+      await updateProfile({
+        role,
+        skills,
+        interests,
+        bio,
+        location,
+      });
+      
+      router.replace('/(tabs)');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to update profile. Please try again.');
     }
+  };
+
+  const toggleSkill = (skill: string) => {
+    if (skills.includes(skill)) {
+      setSkills(skills.filter(s => s !== skill));
+    } else {
+      if (skills.length < 5) {
+        setSkills([...skills, skill]);
+      } else {
+        Alert.alert('Limit Reached', 'You can select up to 5 skills.');
+      }
+    }
+  };
+
+  const toggleInterest = (interest: string) => {
+    if (interests.includes(interest)) {
+      setInterests(interests.filter(i => i !== interest));
+    } else {
+      if (interests.length < 5) {
+        setInterests([...interests, interest]);
+      } else {
+        Alert.alert('Limit Reached', 'You can select up to 5 interests.');
+      }
+    }
+  };
+
+  const renderStepIndicator = () => {
+    return (
+      <View style={styles.stepIndicator}>
+        {[1, 2, 3, 4].map((s) => (
+          <View
+            key={s}
+            style={[
+              styles.stepDot,
+              s === step && styles.activeStepDot,
+              s < step && styles.completedStepDot,
+            ]}
+          >
+            {s < step && <Check size={12} color={Colors.white} />}
+          </View>
+        ))}
+      </View>
+    );
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.progressContainer}>
-        {Array.from({ length: totalSteps() }).map((_, index) => (
-          <View
-            key={index}
-            style={[
-              styles.progressStep,
-              index < step ? styles.progressStepActive : {},
-            ]}
-          />
-        ))}
+      <View style={styles.header}>
+        <Text style={styles.title}>Complete Your Profile</Text>
+        <Text style={styles.subtitle}>
+          Help us personalize your experience
+        </Text>
+        {renderStepIndicator()}
       </View>
-      
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {renderStep()}
+
+      <ScrollView style={styles.content}>
+        {step === 1 && (
+          <View style={styles.step}>
+            <Text style={styles.stepTitle}>What best describes you?</Text>
+            <Text style={styles.stepDescription}>
+              This helps us match you with the right people
+            </Text>
+
+            <View style={styles.roleOptions}>
+              {roleOptions.map((option) => (
+                <TouchableOpacity
+                  key={option.value}
+                  style={[
+                    styles.roleOption,
+                    role === option.value && styles.selectedRoleOption,
+                  ]}
+                  onPress={() => setRole(option.value)}
+                >
+                  <View style={styles.roleHeader}>
+                    <Text style={styles.roleLabel}>{option.label}</Text>
+                    {role === option.value && (
+                      <View style={styles.checkmark}>
+                        <Check size={16} color={Colors.white} />
+                      </View>
+                    )}
+                  </View>
+                  <Text style={styles.roleDescription}>
+                    {option.description}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {step === 2 && (
+          <View style={styles.step}>
+            <Text style={styles.stepTitle}>Select your skills</Text>
+            <Text style={styles.stepDescription}>
+              Choose up to 5 skills that best represent your expertise
+            </Text>
+
+            <View style={styles.tagsContainer}>
+              {skillOptions.map((skill) => (
+                <TouchableOpacity
+                  key={skill}
+                  style={[
+                    styles.tag,
+                    skills.includes(skill) && styles.selectedTag,
+                  ]}
+                  onPress={() => toggleSkill(skill)}
+                >
+                  <Text
+                    style={[
+                      styles.tagText,
+                      skills.includes(skill) && styles.selectedTagText,
+                    ]}
+                  >
+                    {skill}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <Text style={styles.selectedCount}>
+              {skills.length}/5 skills selected
+            </Text>
+          </View>
+        )}
+
+        {step === 3 && (
+          <View style={styles.step}>
+            <Text style={styles.stepTitle}>Select your interests</Text>
+            <Text style={styles.stepDescription}>
+              Choose up to 5 areas that you're interested in
+            </Text>
+
+            <View style={styles.tagsContainer}>
+              {interestOptions.map((interest) => (
+                <TouchableOpacity
+                  key={interest}
+                  style={[
+                    styles.tag,
+                    interests.includes(interest) && styles.selectedTag,
+                  ]}
+                  onPress={() => toggleInterest(interest)}
+                >
+                  <Text
+                    style={[
+                      styles.tagText,
+                      interests.includes(interest) && styles.selectedTagText,
+                    ]}
+                  >
+                    {interest}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <Text style={styles.selectedCount}>
+              {interests.length}/5 interests selected
+            </Text>
+          </View>
+        )}
+
+        {step === 4 && (
+          <View style={styles.step}>
+            <Text style={styles.stepTitle}>Tell us about yourself</Text>
+            <Text style={styles.stepDescription}>
+              Share a brief bio and your location
+            </Text>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Your Bio</Text>
+              <TextInput
+                style={styles.textArea}
+                value={bio}
+                onChangeText={setBio}
+                placeholder="Tell us about your background, experience, and what you're looking for..."
+                placeholderTextColor={Colors.textSecondary}
+                multiline
+                numberOfLines={4}
+                textAlignVertical="top"
+              />
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Your Location</Text>
+              <TextInput
+                style={styles.input}
+                value={location}
+                onChangeText={setLocation}
+                placeholder="City, Country"
+                placeholderTextColor={Colors.textSecondary}
+              />
+            </View>
+          </View>
+        )}
       </ScrollView>
-      
+
       <View style={styles.footer}>
         {step > 1 && (
-          <Button
-            title="Back"
-            onPress={handleBack}
-            variant="outline"
+          <TouchableOpacity
             style={styles.backButton}
-          />
+            onPress={handleBack}
+          >
+            <ChevronLeft size={24} color={Colors.text} />
+            <Text style={styles.backButtonText}>Back</Text>
+          </TouchableOpacity>
         )}
+
         <Button
-          title={step === totalSteps() ? "Finish" : "Next"}
+          title={step === 4 ? "Complete" : "Next"}
           onPress={handleNext}
-          loading={step === totalSteps() && isLoading}
-          gradient={step === totalSteps()}
+          gradient
+          rightIcon={step < 4 ? <ChevronRight size={20} color={Colors.white} /> : undefined}
           style={styles.nextButton}
         />
       </View>
@@ -470,141 +296,176 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  progressContainer: {
-    flexDirection: "row",
-    paddingHorizontal: Theme.spacing.xl,
-    paddingTop: Theme.spacing.xl,
-    paddingBottom: Theme.spacing.md,
-  },
-  progressStep: {
-    flex: 1,
-    height: 4,
-    backgroundColor: Colors.border,
-    marginHorizontal: 2,
-    borderRadius: 2,
-  },
-  progressStepActive: {
-    backgroundColor: Colors.primary,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
+  header: {
     padding: Theme.spacing.xl,
+    alignItems: 'center',
   },
-  stepTitle: {
+  title: {
     fontSize: Theme.typography.sizes.xl,
     fontWeight: Theme.typography.weights.bold as any,
     color: Colors.text,
-    marginBottom: Theme.spacing.sm,
+    marginBottom: Theme.spacing.xs,
   },
-  stepDescription: {
+  subtitle: {
     fontSize: Theme.typography.sizes.md,
     color: Colors.textSecondary,
     marginBottom: Theme.spacing.lg,
   },
-  label: {
+  stepIndicator: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: Theme.spacing.md,
+  },
+  stepDot: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: Colors.background,
+    borderWidth: 2,
+    borderColor: Colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  activeStepDot: {
+    borderColor: Colors.primary,
+    backgroundColor: Colors.primary + '20',
+  },
+  completedStepDot: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
+  },
+  content: {
+    flex: 1,
+    paddingHorizontal: Theme.spacing.xl,
+  },
+  step: {
+    flex: 1,
+  },
+  stepTitle: {
+    fontSize: Theme.typography.sizes.lg,
+    fontWeight: Theme.typography.weights.semibold as any,
+    color: Colors.text,
+    marginBottom: Theme.spacing.xs,
+  },
+  stepDescription: {
+    fontSize: Theme.typography.sizes.md,
+    color: Colors.textSecondary,
+    marginBottom: Theme.spacing.xl,
+  },
+  roleOptions: {
+    gap: Theme.spacing.md,
+  },
+  roleOption: {
+    padding: Theme.spacing.lg,
+    borderRadius: Theme.borderRadius.lg,
+    backgroundColor: Colors.card,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  selectedRoleOption: {
+    borderColor: Colors.primary,
+    backgroundColor: Colors.primary + '10',
+  },
+  roleHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Theme.spacing.xs,
+  },
+  roleLabel: {
+    fontSize: Theme.typography.sizes.lg,
+    fontWeight: Theme.typography.weights.semibold as any,
+    color: Colors.text,
+  },
+  checkmark: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: Colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  roleDescription: {
+    fontSize: Theme.typography.sizes.md,
+    color: Colors.textSecondary,
+  },
+  tagsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Theme.spacing.sm,
+    marginBottom: Theme.spacing.md,
+  },
+  tag: {
+    paddingHorizontal: Theme.spacing.md,
+    paddingVertical: Theme.spacing.sm,
+    borderRadius: Theme.borderRadius.full,
+    backgroundColor: Colors.card,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  selectedTag: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
+  },
+  tagText: {
+    fontSize: Theme.typography.sizes.sm,
+    color: Colors.text,
+  },
+  selectedTagText: {
+    color: Colors.white,
+  },
+  selectedCount: {
+    fontSize: Theme.typography.sizes.sm,
+    color: Colors.textSecondary,
+    marginTop: Theme.spacing.sm,
+  },
+  inputGroup: {
+    marginBottom: Theme.spacing.lg,
+  },
+  inputLabel: {
     fontSize: Theme.typography.sizes.md,
     fontWeight: Theme.typography.weights.medium as any,
     color: Colors.text,
     marginBottom: Theme.spacing.sm,
-    marginTop: Theme.spacing.md,
   },
-  optionsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginBottom: Theme.spacing.md,
-  },
-  optionButton: {
+  input: {
+    backgroundColor: Colors.card,
     borderWidth: 1,
     borderColor: Colors.border,
     borderRadius: Theme.borderRadius.md,
-    paddingHorizontal: Theme.spacing.md,
-    paddingVertical: Theme.spacing.sm,
-    marginRight: Theme.spacing.sm,
-    marginBottom: Theme.spacing.sm,
-  },
-  selectedOption: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
-  },
-  optionText: {
-    color: Colors.text,
-    fontSize: Theme.typography.sizes.sm,
-  },
-  selectedOptionText: {
-    color: Colors.card,
-    fontWeight: Theme.typography.weights.medium as any,
-  },
-  skillCategory: {
-    marginBottom: Theme.spacing.lg,
-  },
-  categoryTitle: {
+    padding: Theme.spacing.md,
     fontSize: Theme.typography.sizes.md,
-    fontWeight: Theme.typography.weights.semibold as any,
     color: Colors.text,
-    marginBottom: Theme.spacing.sm,
   },
-  skillsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-  skillButton: {
+  textArea: {
+    backgroundColor: Colors.card,
     borderWidth: 1,
-    borderColor: Colors.primary + "50",
-    backgroundColor: Colors.primary + "10",
+    borderColor: Colors.border,
     borderRadius: Theme.borderRadius.md,
-    paddingHorizontal: Theme.spacing.md,
-    paddingVertical: Theme.spacing.sm,
-    marginRight: Theme.spacing.sm,
-    marginBottom: Theme.spacing.sm,
-  },
-  selectedSkill: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
-  },
-  skillText: {
-    color: Colors.primary,
-    fontSize: Theme.typography.sizes.sm,
-  },
-  selectedSkillText: {
-    color: Colors.card,
-    fontWeight: Theme.typography.weights.medium as any,
-  },
-  lookingForButton: {
-    borderWidth: 1,
-    borderColor: Colors.secondary + "50",
-    backgroundColor: Colors.secondary + "10",
-    borderRadius: Theme.borderRadius.md,
-    paddingHorizontal: Theme.spacing.md,
-    paddingVertical: Theme.spacing.sm,
-    marginRight: Theme.spacing.sm,
-    marginBottom: Theme.spacing.sm,
-  },
-  selectedLookingFor: {
-    backgroundColor: Colors.secondary,
-    borderColor: Colors.secondary,
-  },
-  lookingForText: {
-    color: Colors.secondary,
-    fontSize: Theme.typography.sizes.sm,
-  },
-  selectedLookingForText: {
-    color: Colors.card,
-    fontWeight: Theme.typography.weights.medium as any,
+    padding: Theme.spacing.md,
+    fontSize: Theme.typography.sizes.md,
+    color: Colors.text,
+    minHeight: 120,
   },
   footer: {
-    flexDirection: "row",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: Theme.spacing.xl,
     borderTopWidth: 1,
     borderTopColor: Colors.border,
   },
   backButton: {
-    flex: 1,
-    marginRight: Theme.spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backButtonText: {
+    fontSize: Theme.typography.sizes.md,
+    color: Colors.text,
+    marginLeft: Theme.spacing.xs,
   },
   nextButton: {
-    flex: 2,
-    marginLeft: Theme.spacing.sm,
+    minWidth: 120,
   },
 });

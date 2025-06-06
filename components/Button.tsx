@@ -1,90 +1,165 @@
-import React from "react";
+import React from 'react';
 import {
   StyleSheet,
   Text,
   TouchableOpacity,
   ActivityIndicator,
+  StyleProp,
   ViewStyle,
   TextStyle,
-  View,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import Colors from "@/constants/colors";
-import Theme from "@/constants/theme";
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import Colors from '@/constants/colors';
+import Theme from '@/constants/theme';
 
-type ButtonProps = {
+interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?: "primary" | "secondary" | "outline" | "text";
-  size?: "small" | "medium" | "large";
+  variant?: 'primary' | 'secondary' | 'outline' | 'text';
+  size?: 'small' | 'medium' | 'large';
   fullWidth?: boolean;
-  loading?: boolean;
   disabled?: boolean;
+  loading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
+  style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
   gradient?: boolean;
-};
+}
 
 export default function Button({
   title,
   onPress,
-  variant = "primary",
-  size = "medium",
+  variant = 'primary',
+  size = 'medium',
   fullWidth = false,
-  loading = false,
   disabled = false,
+  loading = false,
   leftIcon,
   rightIcon,
   style,
   textStyle,
   gradient = false,
 }: ButtonProps) {
-  const buttonStyles: ViewStyle[] = [
-    styles.button,
-    styles[`${size}Button`],
-    styles[`${variant}Button`],
-    fullWidth && styles.fullWidth,
-    disabled && styles.disabledButton,
-    style || {},
-  ];
+  const getButtonStyles = () => {
+    const buttonStyles: StyleProp<ViewStyle>[] = [styles.button];
 
-  const textStyles: TextStyle[] = [
-    styles.text,
-    styles[`${size}Text`],
-    styles[`${variant}Text`],
-    disabled && styles.disabledText,
-    textStyle || {},
-  ];
+    // Add size styles
+    switch (size) {
+      case 'small':
+        buttonStyles.push(styles.buttonSmall);
+        break;
+      case 'large':
+        buttonStyles.push(styles.buttonLarge);
+        break;
+      default:
+        buttonStyles.push(styles.buttonMedium);
+    }
 
-  const renderButtonContent = () => (
-    <>
-      {leftIcon && <View style={styles.leftIcon}>{leftIcon}</View>}
-      {loading ? (
-        <ActivityIndicator
-          size="small"
-          color={variant === "primary" ? Colors.card : Colors.primary}
-        />
-      ) : (
-        <Text style={textStyles}>{title}</Text>
-      )}
-      {rightIcon && <View style={styles.rightIcon}>{rightIcon}</View>}
-    </>
-  );
+    // Add variant styles (if not using gradient)
+    if (!gradient) {
+      switch (variant) {
+        case 'secondary':
+          buttonStyles.push(styles.buttonSecondary);
+          break;
+        case 'outline':
+          buttonStyles.push(styles.buttonOutline);
+          break;
+        case 'text':
+          buttonStyles.push(styles.buttonText);
+          break;
+        default:
+          buttonStyles.push(styles.buttonPrimary);
+      }
+    }
 
-  if (gradient && variant === "primary" && !disabled) {
+    // Add full width style
+    if (fullWidth) {
+      buttonStyles.push(styles.buttonFullWidth);
+    }
+
+    // Add disabled style
+    if (disabled) {
+      buttonStyles.push(styles.buttonDisabled);
+    }
+
+    return buttonStyles;
+  };
+
+  const getTextStyles = () => {
+    const textStyles: StyleProp<TextStyle>[] = [styles.buttonLabel];
+
+    // Add size styles
+    switch (size) {
+      case 'small':
+        textStyles.push(styles.buttonLabelSmall);
+        break;
+      case 'large':
+        textStyles.push(styles.buttonLabelLarge);
+        break;
+      default:
+        textStyles.push(styles.buttonLabelMedium);
+    }
+
+    // Add variant styles
+    switch (variant) {
+      case 'secondary':
+        textStyles.push(styles.buttonLabelSecondary);
+        break;
+      case 'outline':
+        textStyles.push(styles.buttonLabelOutline);
+        break;
+      case 'text':
+        textStyles.push(styles.buttonLabelText);
+        break;
+      default:
+        textStyles.push(styles.buttonLabelPrimary);
+    }
+
+    // Add disabled style
+    if (disabled) {
+      textStyles.push(styles.buttonLabelDisabled);
+    }
+
+    return textStyles;
+  };
+
+  const renderButtonContent = () => {
+    return (
+      <>
+        {loading ? (
+          <ActivityIndicator
+            size="small"
+            color={
+              variant === 'outline' || variant === 'text'
+                ? Colors.primary
+                : Colors.white
+            }
+          />
+        ) : (
+          <>
+            {leftIcon && <View style={styles.leftIcon}>{leftIcon}</View>}
+            <Text style={[getTextStyles(), textStyle]}>{title}</Text>
+            {rightIcon && <View style={styles.rightIcon}>{rightIcon}</View>}
+          </>
+        )}
+      </>
+    );
+  };
+
+  if (gradient && !disabled) {
     return (
       <TouchableOpacity
         onPress={onPress}
         disabled={disabled || loading}
-        style={[styles.buttonWrapper, fullWidth && styles.fullWidth, style]}
+        style={[getButtonStyles(), style]}
+        activeOpacity={0.8}
       >
         <LinearGradient
           colors={[Colors.gradientStart, Colors.gradientEnd]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          style={[buttonStyles, styles.gradientButton]}
+          style={styles.gradientContainer}
         >
           {renderButtonContent()}
         </LinearGradient>
@@ -94,97 +169,102 @@ export default function Button({
 
   return (
     <TouchableOpacity
-      style={buttonStyles}
       onPress={onPress}
       disabled={disabled || loading}
+      style={[getButtonStyles(), style]}
+      activeOpacity={0.8}
     >
       {renderButtonContent()}
     </TouchableOpacity>
   );
 }
 
+const View = ({ style, children }: { style?: StyleProp<ViewStyle>; children: React.ReactNode }) => (
+  <React.Fragment>{children}</React.Fragment>
+);
+
 const styles = StyleSheet.create({
-  buttonWrapper: {
-    borderRadius: Theme.borderRadius.md,
-    overflow: "hidden",
-  },
   button: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: Theme.borderRadius.md,
+  },
+  buttonSmall: {
+    paddingVertical: Theme.spacing.xs,
+    paddingHorizontal: Theme.spacing.sm,
+  },
+  buttonMedium: {
+    paddingVertical: Theme.spacing.sm,
+    paddingHorizontal: Theme.spacing.md,
+  },
+  buttonLarge: {
+    paddingVertical: Theme.spacing.md,
     paddingHorizontal: Theme.spacing.lg,
   },
-  gradientButton: {
-    borderWidth: 0,
-  },
-  fullWidth: {
-    width: "100%",
-  },
-  smallButton: {
-    paddingVertical: Theme.spacing.xs,
-  },
-  mediumButton: {
-    paddingVertical: Theme.spacing.sm,
-  },
-  largeButton: {
-    paddingVertical: Theme.spacing.md,
-  },
-  primaryButton: {
+  buttonPrimary: {
     backgroundColor: Colors.primary,
-    borderWidth: 0,
   },
-  secondaryButton: {
+  buttonSecondary: {
     backgroundColor: Colors.secondary,
-    borderWidth: 0,
   },
-  outlineButton: {
-    backgroundColor: "transparent",
+  buttonOutline: {
+    backgroundColor: 'transparent',
     borderWidth: 1,
     borderColor: Colors.primary,
   },
-  textButton: {
-    backgroundColor: "transparent",
-    borderWidth: 0,
-    paddingHorizontal: 0,
+  buttonText: {
+    backgroundColor: 'transparent',
   },
-  disabledButton: {
+  buttonFullWidth: {
+    width: '100%',
+  },
+  buttonDisabled: {
     backgroundColor: Colors.disabled,
     borderColor: Colors.disabled,
-    opacity: 0.7,
   },
-  text: {
+  buttonLabel: {
     fontWeight: Theme.typography.weights.medium as any,
-    textAlign: "center",
+    textAlign: 'center',
   },
-  smallText: {
+  buttonLabelSmall: {
     fontSize: Theme.typography.sizes.sm,
   },
-  mediumText: {
+  buttonLabelMedium: {
     fontSize: Theme.typography.sizes.md,
   },
-  largeText: {
+  buttonLabelLarge: {
     fontSize: Theme.typography.sizes.lg,
   },
-  primaryText: {
-    color: Colors.card,
+  buttonLabelPrimary: {
+    color: Colors.white,
   },
-  secondaryText: {
-    color: Colors.card,
+  buttonLabelSecondary: {
+    color: Colors.white,
   },
-  outlineText: {
+  buttonLabelOutline: {
     color: Colors.primary,
   },
-  textText: {
+  buttonLabelText: {
     color: Colors.primary,
   },
-  disabledText: {
-    color: Colors.textSecondary,
+  buttonLabelDisabled: {
+    color: Colors.gray500,
   },
   leftIcon: {
     marginRight: Theme.spacing.xs,
   },
   rightIcon: {
     marginLeft: Theme.spacing.xs,
+  },
+  gradientContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: Theme.borderRadius.md,
+    width: '100%',
+    height: '100%',
+    paddingVertical: Theme.spacing.sm,
+    paddingHorizontal: Theme.spacing.md,
   },
 });

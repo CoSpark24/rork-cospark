@@ -440,7 +440,7 @@ const styles = StyleSheet.create({
     color: Colors.text,
   },
   filterButtonTextActive: {
-    color: Colors.card,
+    color: Colors.white,
   },
   contentContainer: {
     gap: Theme.spacing.md,
