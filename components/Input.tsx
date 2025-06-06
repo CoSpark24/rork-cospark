@@ -67,20 +67,20 @@ export default function Input({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16, // Hardcoded value instead of Theme.spacing.md
+    marginBottom: Theme.spacing.md,
   },
   label: {
     fontSize: Theme.typography.sizes.md,
     fontWeight: Theme.typography.weights.medium as any,
     color: Colors.text,
-    marginBottom: 4, // Hardcoded value instead of Theme.spacing.xs
+    marginBottom: Theme.spacing.xs,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: Colors.border,
-    borderRadius: 12, // Hardcoded value instead of Theme.borderRadius.md
+    borderRadius: Theme.borderRadius.md,
     backgroundColor: Colors.card,
   },
   inputContainerError: {
@@ -88,26 +88,26 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    paddingVertical: 16, // Hardcoded value instead of Theme.spacing.md
-    paddingHorizontal: 16, // Hardcoded value instead of Theme.spacing.md
+    paddingVertical: Theme.spacing.md,
+    paddingHorizontal: Theme.spacing.md,
     fontSize: Theme.typography.sizes.md,
     color: Colors.text,
   },
   inputWithLeftIcon: {
-    paddingLeft: 4, // Hardcoded value instead of Theme.spacing.xs
+    paddingLeft: Theme.spacing.xs,
   },
   inputWithRightIcon: {
-    paddingRight: 4, // Hardcoded value instead of Theme.spacing.xs
+    paddingRight: Theme.spacing.xs,
   },
   leftIcon: {
-    paddingLeft: 16, // Hardcoded value instead of Theme.spacing.md
+    paddingLeft: Theme.spacing.md,
   },
   rightIcon: {
-    paddingRight: 16, // Hardcoded value instead of Theme.spacing.md
+    paddingRight: Theme.spacing.md,
   },
   error: {
     fontSize: Theme.typography.sizes.sm,
     color: Colors.error,
-    marginTop: 4, // Hardcoded value instead of Theme.spacing.xs
+    marginTop: Theme.spacing.xs,
   },
 });
