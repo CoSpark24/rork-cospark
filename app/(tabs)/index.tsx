@@ -228,7 +228,7 @@ export default function DashboardScreen() {
                   })}
                 </Text>
                 <View style={styles.eventTypeBadge}>
-                  <Text style={styles.eventTypeText}>{event.type}</Text>
+                  <Text style={styles.eventTypeText}>{event.type || "General"}</Text>
                 </View>
               </TouchableOpacity>
             ))}
@@ -288,7 +288,7 @@ export default function DashboardScreen() {
                 <View style={styles.connectionHeader}>
                   <Text style={styles.connectionName}>{connection.name}</Text>
                   <Text style={styles.connectionMatch}>
-                    {connection.matchScore}% Match
+                    {connection.matchScore || 0}% Match
                   </Text>
                 </View>
                 <Text style={styles.connectionSkills}>

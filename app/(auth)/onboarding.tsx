@@ -133,7 +133,7 @@ const WelcomeStep = ({ handleNext }: { handleNext: () => void; data: Partial<Use
     <View style={styles.welcomeContainer}>
       {Platform.OS !== 'web' ? (
         <LottieView
-          source={require('https://assets.lottiefiles.com/packages/lf20_3vb3qwpu.json')}
+          source={require('@/assets/images/welcome-animation.json')}
           autoPlay
           loop
           style={styles.animation}
