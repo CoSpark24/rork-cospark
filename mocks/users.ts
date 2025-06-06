@@ -1,4 +1,4 @@
-import { UserProfile, UserRole, PitchDeck } from '@/types';
+import { UserProfile, UserRole, PitchDeck, Badge } from '@/types';
 
 export const currentUser: UserProfile = {
   id: 'user_1',
@@ -39,6 +39,46 @@ export const currentUser: UserProfile = {
     theme: 'light',
     language: 'en',
   },
+  stats: {
+    profileViews: 245,
+    growthScore: 78,
+    weeklyActivity: [5, 3, 7, 2, 6, 4, 8],
+    streakDays: 12
+  },
+  badges: [
+    {
+      id: 'badge_1',
+      name: 'Networker',
+      icon: '🤝',
+      color: '#4CAF50',
+      description: 'Connected with 10+ founders',
+      earnedAt: 1685577600000
+    },
+    {
+      id: 'badge_2',
+      name: 'Pitch Master',
+      icon: '📊',
+      color: '#2196F3',
+      description: 'Created 3 pitch decks',
+      earnedAt: 1688169600000
+    },
+    {
+      id: 'badge_3',
+      name: 'Active Member',
+      icon: '⚡',
+      color: '#FFC107',
+      description: 'Active for 30 consecutive days',
+      earnedAt: 1690848000000
+    },
+    {
+      id: 'badge_4',
+      name: 'Mentor',
+      icon: '🎓',
+      color: '#9C27B0',
+      description: 'Helped 5 founders with advice',
+      earnedAt: 1693526400000
+    }
+  ]
 };
 
 export const users: UserProfile[] = [
@@ -55,6 +95,22 @@ export const users: UserProfile[] = [
     interests: ['SaaS', 'Edtech', 'AI/ML', 'Mobile Apps', 'Enterprise Software'],
     createdAt: 1675209600000, // Feb 1, 2023
     lastActive: Date.now() - 3600000, // 1 hour ago
+    stats: {
+      profileViews: 187,
+      growthScore: 65,
+      weeklyActivity: [3, 4, 6, 2, 5, 3, 7],
+      streakDays: 8
+    },
+    badges: [
+      {
+        id: 'badge_5',
+        name: 'Tech Expert',
+        icon: '💻',
+        color: '#2196F3',
+        description: 'Recognized for technical expertise',
+        earnedAt: 1688169600000
+      }
+    ]
   },
   {
     id: 'user_3',
@@ -68,6 +124,22 @@ export const users: UserProfile[] = [
     interests: ['Fintech', 'E-commerce', 'Healthtech', 'SaaS', 'AI/ML'],
     createdAt: 1677628800000, // Mar 1, 2023
     lastActive: Date.now() - 86400000, // 1 day ago
+    stats: {
+      profileViews: 312,
+      growthScore: 82,
+      weeklyActivity: [4, 5, 3, 6, 2, 7, 5],
+      streakDays: 15
+    },
+    badges: [
+      {
+        id: 'badge_6',
+        name: 'Investor',
+        icon: '💰',
+        color: '#4CAF50',
+        description: 'Invested in startups',
+        earnedAt: 1688169600000
+      }
+    ]
   },
   {
     id: 'user_4',
@@ -81,6 +153,22 @@ export const users: UserProfile[] = [
     interests: ['SaaS', 'Mobile Apps', 'AI/ML', 'Consumer Products', 'Social Impact'],
     createdAt: 1680307200000, // Apr 1, 2023
     lastActive: Date.now() - 172800000, // 2 days ago
+    stats: {
+      profileViews: 156,
+      growthScore: 71,
+      weeklyActivity: [2, 3, 5, 4, 6, 3, 4],
+      streakDays: 5
+    },
+    badges: [
+      {
+        id: 'badge_7',
+        name: 'Mentor',
+        icon: '🎓',
+        color: '#9C27B0',
+        description: 'Helped multiple founders',
+        earnedAt: 1688169600000
+      }
+    ]
   },
   {
     id: 'user_5',
@@ -94,6 +182,13 @@ export const users: UserProfile[] = [
     interests: ['IoT', 'Hardware', 'AI/ML', 'Consumer Products', 'Sustainability'],
     createdAt: 1682899200000, // May 1, 2023
     lastActive: Date.now() - 259200000, // 3 days ago
+    stats: {
+      profileViews: 98,
+      growthScore: 54,
+      weeklyActivity: [1, 2, 4, 3, 5, 2, 3],
+      streakDays: 3
+    },
+    badges: []
   },
 ];
 

@@ -30,6 +30,13 @@ export interface UserProfile {
   isVerified?: boolean;
   isPremium?: boolean;
   settings?: UserSettings;
+  stats?: {
+    profileViews?: number;
+    growthScore?: number;
+    weeklyActivity?: number[];
+    streakDays?: number;
+  };
+  badges?: Badge[];
 }
 
 export interface UserSettings {
@@ -91,6 +98,7 @@ export interface MatchProfile {
   compatibility: number;
   isOnline: boolean;
   lastActive?: number;
+  matchScore?: number;
 }
 
 export interface Match {
@@ -183,6 +191,7 @@ export interface Event {
   currency?: string;
   tags?: string[];
   status: "upcoming" | "ongoing" | "completed" | "cancelled";
+  type?: string;
 }
 
 // Feed related types
