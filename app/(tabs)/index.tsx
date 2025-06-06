@@ -125,7 +125,10 @@ export default function DashboardScreen() {
       {user.stats && (
         <GrowthScoreCard
           score={user.stats.growthScore || 0}
-          weeklyActivity={user.stats.weeklyActivity || [0, 0, 0, 0, 0, 0, 0]}
+          // Temporary fix: Summing weekly activity array to pass a single number
+          // This assumes GrowthScoreCard expects a number for weeklyActivity
+          // Update GrowthScoreCard prop type to accept number[] if it's meant to be an array
+          weeklyActivity={user.stats.weeklyActivity?.reduce((a, b) => a + b, 0) || 0}
           streakDays={user.stats.streakDays || 0}
         />
       )}
