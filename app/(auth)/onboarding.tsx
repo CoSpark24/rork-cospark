@@ -1,11 +1,17 @@
 import React from 'react';
-import { View, Text, Platform, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import Button from '@/components/Button';
 import Colors from '@/constants/colors';
 import Theme from '@/constants/theme';
 import { UserProfile } from '@/types';
 
-const WelcomeStep = ({ handleNext, data, updateData }: { handleNext: () => void; data: Partial<UserProfile>; updateData: (data: Partial<UserProfile>) => void }) => {
+interface WelcomeStepProps {
+  handleNext: () => void;
+  data: Partial<UserProfile>;
+  updateData: (data: Partial<UserProfile>) => void;
+}
+
+const WelcomeStep: React.FC<WelcomeStepProps> = ({ handleNext, data, updateData }) => {
   return (
     <View style={styles.welcomeContainer}>
       <Image
@@ -40,11 +46,6 @@ const styles = StyleSheet.create({
   animation: {
     width: 300,
     height: 300,
-    marginBottom: Theme.spacing.lg,
-  },
-  animationFallback: {
-    fontSize: Theme.typography.sizes.md,
-    color: Colors.textSecondary,
     marginBottom: Theme.spacing.lg,
   },
   welcomeTitle: {
