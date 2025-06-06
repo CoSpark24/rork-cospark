@@ -64,6 +64,12 @@ export enum AuthMethod {
   PHONE = "phone",
 }
 
+export enum SubscriptionPlan {
+  FREE = "Free",
+  PRO = "Pro",
+  ENTERPRISE = "Enterprise",
+}
+
 export interface Badge {
   id: string;
   name: string;
@@ -88,6 +94,20 @@ export interface CompatibilityFactor {
   factor: string;
   score: number;
   description: string;
+}
+
+export interface SubscriptionFeature {
+  name: string;
+  included: boolean;
+  limit?: number;
+}
+
+export interface SubscriptionData {
+  plan: SubscriptionPlan;
+  price: number;
+  currency?: string;
+  features: SubscriptionFeature[];
+  isPopular?: boolean;
 }
 
 export interface UserProfile {
@@ -121,6 +141,7 @@ export interface UserProfile {
   portfolioCompanies?: string[];
   sectors?: string[];
   mentoringAreas?: Industry[];
+  subscription?: SubscriptionPlan;
 }
 
 export interface LoginCredentials {
@@ -217,6 +238,10 @@ export interface Event {
   isTicketed?: boolean;
   liveQAEnabled?: boolean;
   recordingUrl?: string;
+  streamingPlatform?: "zoom" | "youtube" | "custom";
+  streamingUrl?: string;
+  isLive?: boolean;
+  hasCountdown?: boolean;
 }
 
 export interface EventRSVP {
@@ -237,6 +262,9 @@ export interface EventQuestion {
   timestamp: number;
   isAnswered: boolean;
   upvotes: number;
+  answer?: string;
+  answeredBy?: string;
+  answeredAt?: number;
 }
 
 export interface FeedPost {
@@ -254,6 +282,8 @@ export interface FeedPost {
   isLiked?: boolean;
   isPinned?: boolean;
   isTrending?: boolean;
+  isModerated?: boolean;
+  reportCount?: number;
 }
 
 export interface FeedComment {
@@ -280,6 +310,7 @@ export interface FounderCircle {
   avatar?: string;
   isJoined?: boolean;
   lastActivity?: number;
+  category: string;
 }
 
 export interface CircleMessage {
@@ -426,4 +457,50 @@ export interface Message {
   fileUrl?: string;
   fileName?: string;
   isRead: boolean;
+}
+
+export interface AdminUser {
+  id: string;
+  name: string;
+  email: string;
+  role: "admin" | "moderator";
+  permissions: string[];
+  createdAt: number;
+}
+
+export interface Coupon {
+  id: string;
+  code: string;
+  discount: number;
+  type: "percentage" | "fixed";
+  validUntil: number;
+  usageLimit: number;
+  usedCount: number;
+  isActive: boolean;
+  createdBy: string;
+  createdAt: number;
+}
+
+export interface PushNotification {
+  id: string;
+  title: string;
+  body: string;
+  targetUsers: string[];
+  scheduledAt?: number;
+  sentAt?: number;
+  status: "draft" | "scheduled" | "sent";
+  createdBy: string;
+}
+
+export interface ContentReport {
+  id: string;
+  contentType: "post" | "comment" | "user" | "event";
+  contentId: string;
+  reportedBy: string;
+  reason: string;
+  description?: string;
+  status: "pending" | "reviewed" | "resolved" | "dismissed";
+  reviewedBy?: string;
+  reviewedAt?: number;
+  createdAt: number;
 }
