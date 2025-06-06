@@ -29,6 +29,10 @@ const Colors = {
   
   // Add white for icon colors
   white: '#FFFFFF',
+  
+  // Gradient colors
+  gradientStart: '#3730A3',
+  gradientEnd: '#6366F1',
 };
 
 export default Colors;
