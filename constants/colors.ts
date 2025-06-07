@@ -5,7 +5,7 @@ export default {
   background: '#FFFFFF',
   white: '#FFFFFF',
   black: '#000000',
-  text: '#1B1B1B', // Added to match the usage in layout
+  text: '#1B1B1B',
   textPrimary: '#1B1B1B',
   textSecondary: '#666666',
   error: '#DC2626',
