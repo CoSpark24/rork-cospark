@@ -1,6 +1,27 @@
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 
+interface ExtendedFileInfo extends FileSystem.FileInfo {
+  size?: number;
+}
+
+const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50 MB
+
+async function getFileSize(uri: string): Promise<number> {
+  const fileInfo = (await FileSystem.getInfoAsync(uri)) as ExtendedFileInfo;
+  if (!fileInfo.exists) {
+    throw new Error('Video file not found');
+  }
+
+  // Note: size might still be undefined
+  if (fileInfo.size === undefined) {
+    console.warn('Warning: File size not provided. Skipping size check.');
+    return 0;
+  }
+
+  return fileInfo.size;
+}
+
 export async function recordVideo(): Promise<string | null> {
   try {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -13,33 +34,18 @@ export async function recordVideo(): Promise<string | null> {
       allowsEditing: true,
       aspect: [9, 16],
       quality: 0.8,
-      videoMaxDuration: 60, // 1 minute max
+      videoMaxDuration: 60,
     });
 
-    if (!result.canceled && result.assets[0].uri) {
-      // Get video file info
-      const fileInfo = await FileSystem.getInfoAsync(result.assets[0].uri);
-      
-      // Check if file exists and has size info
-      if (!fileInfo.exists) {
-        throw new Error('Video file not found');
-      }
+    if (!result.canceled && result.assets && result.assets[0]?.uri) {
+      const uri = result.assets[0].uri;
+      const size = await getFileSize(uri);
 
-      // Check if video is under 50MB
-      const fileInfoWithSize = await FileSystem.getInfoAsync(result.assets[0].uri, { size: true });
-      
-      // Use type assertion with a more specific type
-      interface FileInfoWithSize extends FileSystem.FileInfo {
-        size?: number;
-      }
-      
-      const fileSize = (fileInfoWithSize as FileInfoWithSize).size || 0;
-        
-      if (fileSize > 50 * 1024 * 1024) {
+      if (size > MAX_VIDEO_SIZE) {
         throw new Error('Video must be under 50MB');
       }
 
-      return result.assets[0].uri;
+      return uri;
     }
 
     return null;
@@ -64,29 +70,15 @@ export async function pickVideo(): Promise<string | null> {
       videoMaxDuration: 60,
     });
 
-    if (!result.canceled && result.assets[0].uri) {
-      // Check if file exists and has size info
-      const fileInfo = await FileSystem.getInfoAsync(result.assets[0].uri);
-      
-      if (!fileInfo.exists) {
-        throw new Error('Video file not found');
-      }
+    if (!result.canceled && result.assets && result.assets[0]?.uri) {
+      const uri = result.assets[0].uri;
+      const size = await getFileSize(uri);
 
-      // Check if video is under 50MB
-      const fileInfoWithSize = await FileSystem.getInfoAsync(result.assets[0].uri, { size: true });
-      
-      // Use type assertion with a more specific type
-      interface FileInfoWithSize extends FileSystem.FileInfo {
-        size?: number;
-      }
-      
-      const fileSize = (fileInfoWithSize as FileInfoWithSize).size || 0;
-        
-      if (fileSize > 50 * 1024 * 1024) {
+      if (size > MAX_VIDEO_SIZE) {
         throw new Error('Video must be under 50MB');
       }
 
-      return result.assets[0].uri;
+      return uri;
     }
 
     return null;
@@ -97,8 +89,6 @@ export async function pickVideo(): Promise<string | null> {
 }
 
 export async function uploadVideo(uri: string): Promise<string> {
-  // TODO: Implement video upload to cloud storage
-  // This is a placeholder that returns the local URI
-  // In production, you would upload to Firebase Storage or similar
+  // Placeholder: Replace with Firebase/Supabase upload logic
   return uri;
 }
