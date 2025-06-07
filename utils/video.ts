@@ -3,14 +3,19 @@ import * as FileSystem from 'expo-file-system';
 
 const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB
 
+// Type guard to check if FileInfo has size property
+function hasSize(fileInfo: FileSystem.FileInfo): fileInfo is FileSystem.FileInfo & { size: number } {
+  return 'size' in fileInfo;
+}
+
 // Helper to validate file size
 async function isFileValid(uri: string): Promise<boolean> {
   const fileInfo = await FileSystem.getInfoAsync(uri, { size: true });
+  
   if (!fileInfo.exists) return false;
-
-  // Type assertion since we know size exists when we pass { size: true }
-  const fileSize = (fileInfo as FileSystem.FileInfo & { size: number }).size;
-  return fileSize <= MAX_VIDEO_SIZE;
+  if (!hasSize(fileInfo)) return false;
+  
+  return fileInfo.size <= MAX_VIDEO_SIZE;
 }
 
 export async function recordVideo(): Promise<string | null> {
