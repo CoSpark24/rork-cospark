@@ -1,4 +1,4 @@
-import { initializeApp, getApps, getApp } from 'firebase/app';
+import { initializeApp, getApps, getApp } from 'firebase/auth';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -7,7 +7,7 @@ const firebaseConfig = {
   projectId: 'cospark-71d2e',
   storageBucket: 'cospark-71d2e.appspot.com',
   messagingSenderId: '332973014967',
-  appId: 'YOUR_APP_ID',
+  appId: '1:332973014967:web:9b9b9b9b9b9b9b9b9b9b9b',
 };
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();

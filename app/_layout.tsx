@@ -18,6 +18,7 @@ export default function RootLayout() {
 
   return (
     <Stack
+      initialRouteName="(auth)/splash"
       screenOptions={{
         headerStyle: {
           backgroundColor: Colors.card,
