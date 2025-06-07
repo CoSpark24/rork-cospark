@@ -1,4 +1,3 @@
-// utils/video.ts
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 
@@ -6,9 +5,11 @@ const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB
 
 // Helper to validate file size
 async function isFileValid(uri: string): Promise<boolean> {
-  const fileInfo = await FileSystem.getInfoAsync(uri);
-  const fileSize = (fileInfo as FileSystem.FileInfo & { size?: number }).size ?? 0;
-  return fileInfo.exists && fileSize <= MAX_VIDEO_SIZE;
+  const fileInfo = await FileSystem.getInfoAsync(uri, { size: true });
+  if (!fileInfo.exists) return false;
+  
+  const fileSize = fileInfo.size ?? 0;
+  return fileSize <= MAX_VIDEO_SIZE;
 }
 
 export async function recordVideo(): Promise<string | null> {

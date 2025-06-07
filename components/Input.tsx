@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: Theme.typography.sizes.md,
-    fontWeight: '500', // or use 'bold' / 'normal'
+    fontWeight: '500',
     color: Colors.textPrimary,
     marginBottom: Theme.spacing.xs,
   },
