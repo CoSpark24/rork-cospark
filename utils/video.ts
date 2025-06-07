@@ -7,7 +7,7 @@ const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB
 // Helper to validate file size
 async function isFileValid(uri: string): Promise<boolean> {
   const fileInfo = await FileSystem.getInfoAsync(uri);
-  const fileSize = fileInfo?.size ?? 0;
+  const fileSize = (fileInfo as FileSystem.FileInfo & { size?: number }).size ?? 0;
   return fileInfo.exists && fileSize <= MAX_VIDEO_SIZE;
 }
 
