@@ -9,6 +9,7 @@ import {
   TextStyle,
   TextInputProps,
 } from 'react-native';
+
 import Colors from '@/constants/colors';
 import Theme from '@/constants/theme';
 
@@ -36,16 +37,16 @@ export default function Input({
 }: InputProps) {
   return (
     <View style={[styles.container, containerStyle]}>
-      {label && <Text style={[styles.label, labelStyle]}>{label}</Text>}
-      
+      {label ? <Text style={[styles.label, labelStyle]}>{label}</Text> : null}
+
       <View
         style={[
           styles.inputContainer,
           error ? styles.inputContainerError : null,
         ]}
       >
-        {leftIcon && <View style={styles.leftIcon}>{leftIcon}</View>}
-        
+        {leftIcon ? <View style={styles.leftIcon}>{leftIcon}</View> : null}
+
         <TextInput
           style={[
             styles.input,
@@ -56,11 +57,11 @@ export default function Input({
           placeholderTextColor={Colors.textSecondary}
           {...props}
         />
-        
-        {rightIcon && <View style={styles.rightIcon}>{rightIcon}</View>}
+
+        {rightIcon ? <View style={styles.rightIcon}>{rightIcon}</View> : null}
       </View>
-      
-      {error && <Text style={[styles.error, errorStyle]}>{error}</Text>}
+
+      {error ? <Text style={[styles.error, errorStyle]}>{error}</Text> : null}
     </View>
   );
 }
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: Theme.typography.sizes.md,
-    fontWeight: Theme.typography.weights.medium as any,
+    fontWeight: '500', // or use 'bold' / 'normal'
     color: Colors.textPrimary,
     marginBottom: Theme.spacing.xs,
   },
