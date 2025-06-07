@@ -26,7 +26,8 @@ export async function recordVideo(): Promise<string | null> {
       }
 
       // Check if video is under 50MB
-      const fileSize = (await FileSystem.getInfoAsync(result.assets[0].uri, { size: true })).size ?? 0;
+      const fileInfoWithSize = await FileSystem.getInfoAsync(result.assets[0].uri, { size: true });
+      const fileSize = (fileInfoWithSize as FileSystem.FileInfo & { size: number }).size ?? 0;
       if (fileSize > 50 * 1024 * 1024) {
         throw new Error('Video must be under 50MB');
       }
@@ -65,7 +66,8 @@ export async function pickVideo(): Promise<string | null> {
       }
 
       // Check if video is under 50MB
-      const fileSize = (await FileSystem.getInfoAsync(result.assets[0].uri, { size: true })).size ?? 0;
+      const fileInfoWithSize = await FileSystem.getInfoAsync(result.assets[0].uri, { size: true });
+      const fileSize = (fileInfoWithSize as FileSystem.FileInfo & { size: number }).size ?? 0;
       if (fileSize > 50 * 1024 * 1024) {
         throw new Error('Video must be under 50MB');
       }
