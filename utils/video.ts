@@ -28,9 +28,12 @@ export async function recordVideo(): Promise<string | null> {
       // Check if video is under 50MB
       const fileInfoWithSize = await FileSystem.getInfoAsync(result.assets[0].uri, { size: true });
       
-      // Type assertion to handle the size property
-      const fileSize = fileInfoWithSize.exists ? 
-        (fileInfoWithSize as unknown as { size: number }).size : 0;
+      // Use type assertion with a more specific type
+      interface FileInfoWithSize extends FileSystem.FileInfo {
+        size?: number;
+      }
+      
+      const fileSize = (fileInfoWithSize as FileInfoWithSize).size || 0;
         
       if (fileSize > 50 * 1024 * 1024) {
         throw new Error('Video must be under 50MB');
@@ -72,9 +75,12 @@ export async function pickVideo(): Promise<string | null> {
       // Check if video is under 50MB
       const fileInfoWithSize = await FileSystem.getInfoAsync(result.assets[0].uri, { size: true });
       
-      // Type assertion to handle the size property
-      const fileSize = fileInfoWithSize.exists ? 
-        (fileInfoWithSize as unknown as { size: number }).size : 0;
+      // Use type assertion with a more specific type
+      interface FileInfoWithSize extends FileSystem.FileInfo {
+        size?: number;
+      }
+      
+      const fileSize = (fileInfoWithSize as FileInfoWithSize).size || 0;
         
       if (fileSize > 50 * 1024 * 1024) {
         throw new Error('Video must be under 50MB');
