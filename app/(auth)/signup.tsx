@@ -5,13 +5,12 @@ import Colors from '@/constants/colors';
 import Theme from '@/constants/theme';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/src/firebase/firebaseConfig';
 import { useAuthStore } from '@/store/auth-store';
+import { LoginCredentials, AuthMethod } from '@/types';
 
 export default function SignupScreen() {
   const router = useRouter();
-  const { isLoading, error } = useAuthStore();
+  const { signup, isLoading, error } = useAuthStore();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,17 +18,19 @@ export default function SignupScreen() {
 
   const handleSignup = async () => {
     if (password !== confirmPassword) {
-      // Normally, we'd set an error in the store, but for simplicity, we'll just alert
       alert("Passwords don't match");
       return;
     }
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      // If successful, the onAuthStateChanged listener in splash.tsx will handle navigation
-    } catch (err) {
-      // Handle error appropriately in a real app
-      alert(err instanceof Error ? err.message : "Signup failed");
-    }
+    
+    const credentials: LoginCredentials = {
+      email,
+      password,
+      method: AuthMethod.EMAIL,
+      name,
+    };
+    
+    await signup(credentials);
+    // If signup is successful, the auth store will handle navigation
   };
 
   const navigateToLogin = () => {

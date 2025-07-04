@@ -1,9 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { UserProfile, AuthMethod, LoginCredentials, SignupData } from "@/types";
-import { signInWithEmailAndPassword, signOut, updateProfile as updateFirebaseProfile } from 'firebase/auth';
-import { auth } from '@/src/firebase/firebaseConfig';
+import { UserProfile, LoginCredentials } from "@/types";
 
 interface AuthState {
   user: UserProfile | null;
@@ -11,8 +9,10 @@ interface AuthState {
   isLoading: boolean;
   error: string | null;
   login: (credentials: LoginCredentials) => Promise<void>;
+  signup: (credentials: LoginCredentials) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (userData: Partial<UserProfile>) => Promise<void>;
+  clearError: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -25,21 +25,46 @@ export const useAuthStore = create<AuthState>()(
       login: async (credentials: LoginCredentials) => {
         set({ isLoading: true, error: null });
         try {
-          const userCredential = await signInWithEmailAndPassword(
-            auth,
-            credentials.email || '',
-            credentials.password || ''
-          );
-
-          const firebaseUser = userCredential.user;
-
+          // Mock login - replace with real API call later
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          // Simulate login validation
+          if (credentials.email === 'demo@example.com' && credentials.password === 'password') {
+            set({
+              user: {
+                id: "1",
+                email: credentials.email,
+                name: "Demo User",
+                avatar: "",
+                role: "user",
+                createdAt: Date.now(),
+              },
+              isAuthenticated: true,
+              isLoading: false,
+            });
+          } else {
+            throw new Error("Invalid credentials");
+          }
+        } catch (error) {
+          set({
+            isLoading: false,
+            error: error instanceof Error ? error.message : "Login failed",
+          });
+        }
+      },
+      signup: async (credentials: LoginCredentials) => {
+        set({ isLoading: true, error: null });
+        try {
+          // Mock signup - replace with real API call later
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
           set({
             user: {
-              id: firebaseUser.uid,
-              email: firebaseUser.email || '',
-              name: firebaseUser.displayName || 'New User',
-              avatar: firebaseUser.photoURL || '',
-              role: '',
+              id: Math.random().toString(),
+              email: credentials.email || "",
+              name: credentials.name || "New User",
+              avatar: "",
+              role: "user",
               createdAt: Date.now(),
             },
             isAuthenticated: true,
@@ -48,28 +73,19 @@ export const useAuthStore = create<AuthState>()(
         } catch (error) {
           set({
             isLoading: false,
-            error: error instanceof Error ? error.message : "Login failed",
+            error: error instanceof Error ? error.message : "Signup failed",
           });
         }
       },
       logout: async () => {
-        try {
-          await signOut(auth);
-        } catch (err) {
-          console.error('Logout error:', err);
-        }
-        set({ user: null, isAuthenticated: false });
+        set({ user: null, isAuthenticated: false, error: null });
       },
       updateProfile: async (userData: Partial<UserProfile>) => {
         set({ isLoading: true, error: null });
         try {
-          if (auth.currentUser) {
-            await updateFirebaseProfile(auth.currentUser, {
-              displayName: userData.name,
-              photoURL: userData.avatar,
-            });
-          }
-
+          // Mock update - replace with real API call later
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
           set((state) => ({
             user: state.user ? { ...state.user, ...userData } : null,
             isLoading: false,
@@ -80,6 +96,9 @@ export const useAuthStore = create<AuthState>()(
             error: error instanceof Error ? error.message : "Update failed",
           });
         }
+      },
+      clearError: () => {
+        set({ error: null });
       },
     }),
     {

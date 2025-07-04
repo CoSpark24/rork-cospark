@@ -4,6 +4,7 @@ import Colors from '@/constants/colors';
 export default function AuthLayout() {
   return (
     <Stack
+      initialRouteName="splash"
       screenOptions={{
         headerShown: false,
         contentStyle: {
@@ -11,11 +12,11 @@ export default function AuthLayout() {
         },
       }}
     >
-      <Stack.Screen name="splash" options={{ headerShown: false }} />
-      <Stack.Screen name="welcome" options={{ headerShown: false }} />
-      <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-      <Stack.Screen name="login" options={{ headerShown: false }} />
-      <Stack.Screen name="signup" options={{ headerShown: false }} />
+      <Stack.Screen name="splash" />
+      <Stack.Screen name="welcome" />
+      <Stack.Screen name="onboarding" />
+      <Stack.Screen name="login" />
+      <Stack.Screen name="signup" />
     </Stack>
   );
 }

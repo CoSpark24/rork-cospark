@@ -1,16 +1,14 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Stack } from 'expo-router';
 import { useColorScheme } from 'react-native';
-import { useAuthStore } from '@/store/auth-store';
 import { useSubscriptionStore } from '@/store/subscription-store';
 import Colors from '@/constants/colors';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const { isAuthenticated } = useAuthStore();
   const { setUserRegion, checkSubscriptionStatus } = useSubscriptionStore();
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Initialize subscription status and region once on load
     checkSubscriptionStatus();
     setUserRegion('IN'); // Replace with dynamic detection for production
@@ -18,19 +16,23 @@ export default function RootLayout() {
 
   return (
     <Stack
-      initialRouteName="(auth)/splash"
       screenOptions={{
         headerStyle: {
           backgroundColor: Colors.card,
         },
-        headerTintColor: Colors.text,
+        headerTintColor: Colors.textPrimary,
         contentStyle: {
           backgroundColor: Colors.background,
         },
       }}
     >
       {/* AUTH */}
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      <Stack.Screen 
+        name="(auth)" 
+        options={{ 
+          headerShown: false 
+        }} 
+      />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="admin" options={{ headerShown: false }} />
 
