@@ -20,7 +20,8 @@ export default function SplashScreen() {
           return;
         }
 
-        router.replace('/(auth)/login');
+        // Skip login for now and go directly to main app
+        router.replace('/(tabs)');
       } catch (error) {
         console.error('Error checking onboarding status:', error);
         router.replace('/(auth)/welcome');

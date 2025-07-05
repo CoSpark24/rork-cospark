@@ -21,7 +21,7 @@ const GrowthScoreCard: React.FC<Props> = ({ score, weeklyActivity, streakDays })
           <Text style={styles.metricValue}>{score}</Text>
         </View>
         <View style={styles.metricItem}>
-          <Flame size={20} color={Colors.secondary} />
+          <Flame size={20} color={Colors.primaryLight} />
           <Text style={styles.metricLabel}>Weekly Activity</Text>
           <Text style={styles.metricValue}>{weeklyActivity}</Text>
         </View>

@@ -9,8 +9,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
-    "@firebase/app": "^0.13.1",
-    "@firebase/auth": "^1.10.7",
+
     "@hono/trpc-server": "^0.3.4",
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-navigation/native": "^7.1.6",
@@ -23,7 +22,7 @@
     "expo-blur": "~14.1.4",
     "expo-constants": "~17.1.4",
     "expo-file-system": "~18.1.10",
-    "expo-firebase-auth": "^2.0.0",
+
     "expo-font": "~13.3.0",
     "expo-haptics": "~14.1.4",
     "expo-image": "~2.1.6",
@@ -37,7 +36,7 @@
     "expo-symbols": "~0.4.4",
     "expo-system-ui": "~5.0.6",
     "expo-web-browser": "~14.1.6",
-    "firebase": "^11.9.0",
+
     "hono": "^4.7.11",
     "lottie-react-native": "7.2.2",
     "lucide-react-native": "^0.475.0",

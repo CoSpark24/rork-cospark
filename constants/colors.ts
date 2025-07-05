@@ -1,6 +1,7 @@
 export default {
   primary: '#4361EE',
   primaryLight: '#4895EF',
+  secondary: '#7209B7',
   accent: '#F4A261',
   background: '#FFFFFF',
   white: '#FFFFFF',
