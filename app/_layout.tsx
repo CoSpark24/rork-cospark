@@ -1,19 +1,13 @@
 import React from 'react';
 import { Stack } from 'expo-router';
-import { useColorScheme } from 'react-native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useSubscriptionStore } from '@/store/subscription-store';
+import { trpc, trpcClient } from '@/lib/trpc';
 import Colors from '@/constants/colors';
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const { setUserRegion, checkSubscriptionStatus } = useSubscriptionStore();
+const queryClient = new QueryClient();
 
-  React.useEffect(() => {
-    // Initialize subscription status and region once on load
-    checkSubscriptionStatus();
-    setUserRegion('IN'); // Replace with dynamic detection for production
-  }, []);
-
+function RootLayoutNav() {
   return (
     <Stack
       screenOptions={{
@@ -67,5 +61,22 @@ export default function RootLayout() {
       {/* MESSAGING */}
       <Stack.Screen name="conversation/[id]" options={{ title: 'Conversation' }} />
     </Stack>
+  );
+}
+
+export default function RootLayout() {
+  const { setUserRegion, checkSubscriptionStatus } = useSubscriptionStore();
+
+  React.useEffect(() => {
+    checkSubscriptionStatus();
+    setUserRegion('IN');
+  }, [checkSubscriptionStatus, setUserRegion]);
+
+  return (
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <RootLayoutNav />
+      </QueryClientProvider>
+    </trpc.Provider>
   );
 }

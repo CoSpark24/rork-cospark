@@ -24,11 +24,11 @@ export default function TabsLayout() {
         headerStyle: {
           backgroundColor: Colors.card,
         },
-        headerTintColor: Colors.text,
+        headerTintColor: Colors.textPrimary,
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => <Users size={24} color={color} />,
